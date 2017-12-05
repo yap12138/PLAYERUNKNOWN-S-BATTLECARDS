@@ -1,7 +1,7 @@
-#include "widget.h"
-#include "ui_widget.h"
+#include "mainwidget.h"
+#include "ui_mainwidget.h"
 
-Widget::Widget(QWidget *parent) :
+Mainwidget::Mainwidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
 {
@@ -15,22 +15,24 @@ Widget::Widget(QWidget *parent) :
 
 }
 
-Widget::~Widget()
+Mainwidget::~Mainwidget()
 {
     delete ui;
 }
 
-void Widget::initialazation()
+void Mainwidget::initialazation()
 {
-    Widget::_card[0] = new QLabel(this);
-    Widget::_card[1] = new QLabel(this);
-    Widget::_card[2] = new QLabel(this);
-    Widget::_card[3] = new QLabel(this);
+    Mainwidget::_card[0] = new QLabel(this);
+    Mainwidget::_card[1] = new QLabel(this);
+    Mainwidget::_card[2] = new QLabel(this);
+    Mainwidget::_card[3] = new QLabel(this);
+    Mainwidget::_card[4] = new QLabel(this);
 
-    _card[0]->setGeometry(400,650,150,200);
-    _card[1]->setGeometry(600,650,150,200);
-    _card[2]->setGeometry(800,650,150,200);
-    _card[3]->setGeometry(1000,650,150,200);
+    _card[0]->setGeometry(200,650,150,200);
+    _card[1]->setGeometry(400,650,150,200);
+    _card[2]->setGeometry(600,650,150,200);
+    _card[3]->setGeometry(800,650,150,200);
+    _card[4]->setGeometry(1000,650,150,200);
 
     //_card[0]->setText("card");
 
@@ -38,9 +40,10 @@ void Widget::initialazation()
     _card[1]->setStyleSheet("background-color:rgb(255, 131, 197)");
     _card[2]->setStyleSheet("background-color:rgb(255, 131, 197)");
     _card[3]->setStyleSheet("background-color:rgb(255, 131, 197)");
+    _card[4]->setStyleSheet("background-color:rgb(255, 131, 197)");
 
-    Widget::_detailedCard[0] = new QLabel(this);
-    Widget::_detailedCard[1] = new QLabel(this);
+    Mainwidget::_detailedCard[0] = new QLabel(this);
+    Mainwidget::_detailedCard[1] = new QLabel(this);
 
     _detailedCard[0]->setGeometry(1300,50,300,400);
     _detailedCard[1]->setGeometry(1300,450,300,400);
@@ -48,9 +51,9 @@ void Widget::initialazation()
     _detailedCard[1]->setStyleSheet("background-color:rgb(85,255,0)");
 
                                           //自己出的卡，为了指示卡片位置和大小
-    Widget::_card1[0] = new QLabel(this);
-    Widget::_card1[1] = new QLabel(this);
-    Widget::_card1[2] = new QLabel(this);
+    Mainwidget::_card1[0] = new QLabel(this);
+    Mainwidget::_card1[1] = new QLabel(this);
+    Mainwidget::_card1[2] = new QLabel(this);
 
 
     _card1[0]->setGeometry(450,350,150,200);
