@@ -25,7 +25,6 @@ bool Widget::eventFilter(QObject *watched, QEvent *event)
     {
         if(event->type()==QEvent::MouseButtonPress)
         {
-            ui->label_2->setText(ui->textEdit->toPlainText());
             _client = new QTcpSocket(this);
             _client->connectToHost(QHostAddress(ui->textEdit->toPlainText()),5000);
             QDataStream s(_client);
@@ -35,12 +34,12 @@ bool Widget::eventFilter(QObject *watched, QEvent *event)
             return true;
         }
     }
+    return false;
 }
 
 void Widget::initClient()
 {
     ui->pushButton->installEventFilter(this);
-
     //client->connectToHost(QHostAddress());
 }
 
