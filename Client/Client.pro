@@ -24,14 +24,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        widget.cpp
+    connectwidget.cpp
 
 HEADERS += \
-        widget.h
+    connectwidget.h
 
 FORMS += \
-        widget.ui
+    connectwidget.ui
 INCLUDEPATH += ./../CardLib/outlib/include
 LIBS += -L"./../CardLib/outlib/lib" -lCard
 LIBS += -L"./../CardLib/outlib/bin"

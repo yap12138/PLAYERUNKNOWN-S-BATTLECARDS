@@ -1,25 +1,25 @@
-#include "widget.h"
-#include "ui_widget.h"
+#include "connectwidget.h"
+#include "ui_connectwidget.h"
 
-Widget::Widget(QWidget *parent) :
+ConnectWidget::ConnectWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Widget)
+    ui(new Ui::ConnectWidget)
 {
     ui->setupUi(this);
     initClient();
 }
 
-Widget::~Widget()
+ConnectWidget::~ConnectWidget()
 {
     delete ui;
 }
 
-Ui::Widget Widget::getUi()
+Ui::ConnectWidget ConnectWidget::getUi()
 {
     return *ui;
 }
 
-bool Widget::eventFilter(QObject *watched, QEvent *event)
+bool ConnectWidget::eventFilter(QObject *watched, QEvent *event)
 {
     if(watched == ui->pushButton)
     {
@@ -37,38 +37,38 @@ bool Widget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-void Widget::initClient()
+void ConnectWidget::initClient()
 {
     ui->pushButton->installEventFilter(this);
     //client->connectToHost(QHostAddress());
 }
 
-QString Widget::getKeyFromSocket(const QTcpSocket *) const
+QString ConnectWidget::getKeyFromSocket(const QTcpSocket *) const
 {
 
 }
 
-void Widget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
+void ConnectWidget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
 {
 
 }
 
-void Widget::acceptConnection()
+void ConnectWidget::acceptConnection()
 {
 
 }
 
-void Widget::onDisConnect()
+void ConnectWidget::onDisConnect()
 {
 
 }
 
-void Widget::onReadyRead()
+void ConnectWidget::onReadyRead()
 {
 
 }
 
-void Widget::sendMessage()
+void ConnectWidget::sendMessage()
 {
     QDataStream s(_client);
     s<<0;

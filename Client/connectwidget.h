@@ -5,21 +5,21 @@
 #include <QtNetwork>
 #include <utility>
 namespace Ui {
-class Widget;
+class ConnectWidget;
 }
 
-class Widget : public QWidget
+class ConnectWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Widget(QWidget *parent = 0);
-    ~Widget();
-    Ui::Widget getUi();
+    explicit ConnectWidget(QWidget *parent = 0);
+    ~ConnectWidget();
+    Ui::ConnectWidget getUi();
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
 private:
-    Ui::Widget *ui;
+    Ui::ConnectWidget *ui;
     QTcpSocket *_client;
 private:
     void initClient();
