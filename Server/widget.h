@@ -9,7 +9,7 @@
 
 using std::pair;
 
-typedef pair<int, QString> cKey;    //存放客户端socket的Hash容器的键
+//typedef pair<int, QString> cKey;
 
 namespace Ui {
 class Widget;
@@ -25,7 +25,8 @@ public:
 private:
     Ui::Widget *ui;
     QTcpServer *_server;
-    QHash<cKey, QTcpSocket *> _clientList;
+    QHostAddress _localHost;
+    QHash<int, QTcpSocket *> _clientList;
 
 private:
     void initServer();

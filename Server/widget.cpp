@@ -12,13 +12,15 @@ Widget::Widget(QWidget *parent) :
 Widget::~Widget()
 {
     delete ui;
+    delete _server;
 }
 
 void Widget::initServer()
 {
     _server = new QTcpServer(this);
-    QHostAddress localHost = getHostConnectedIP();
-    _server->listen(localHost, 5000);
+    //_localHost = getHostConnectedIP();
+    _localHost = QHostAddress(QHostAddress::LocalHost);
+    _server->listen(_localHost, 5000);
     this->ui->lab_server->setText(localHost.toString());
     connect(_server, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
 }
@@ -88,6 +90,7 @@ void Widget::acceptConnection()
         this->ui->lab_client2->setText(keyString);
         //_server->pauseAccepting();
         _server->close();
+
     }
     qDebug()<<"list new size:"<<this->_clientList.size();
 
@@ -111,7 +114,7 @@ void Widget::onDisConnect()
         //_server->resumeAccepting();
         this->ui->lab_client2->setText(QStringLiteral(" "));
         this->ui->lab_client2_name->setText(QStringLiteral(" "));
-        _server->listen(getHostConnectedIP(), 5000);
+        _server->listen(_localHost, 5000);
     }
 }
 
