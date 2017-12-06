@@ -26,14 +26,18 @@ SOURCES += \
         card.cpp \
     monstercard.cpp \
     magiccard.cpp \
-    armscard.cpp
+    armscard.cpp \
+    magicdeck.cpp \
+    monsterdeck.cpp
 
 HEADERS += \
         card.h \
         card_global.h \  
     monstercard.h \
     magiccard.h \
-    armscard.h
+    armscard.h \
+    magicdeck.h \
+    monsterdeck.h
 
 unix {
     target.path = /usr/lib
