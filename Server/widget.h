@@ -27,20 +27,30 @@ private:
     Ui::Widget *ui;
     QTcpServer *_server;
     QHostAddress _localHost;
-    QQueue<Player *> _playerList;
+    QQueue<Player *> _playerQueue;
     QHash<QTcpSocket *, PlayerPair> _matchedList;
 
 private:
     void initServer();
+    void initConnect();
     QHostAddress getHostConnectedIP() const;
     Player* getPlayerFromSocket(QTcpSocket const *) const;
+    Player* getEnemyFromSocket(QTcpSocket const *) const;
 
     void getClientInfo(QTcpSocket* const socket, QDataStream & stream);
+
+    void sendMessage( Player* const player, int message);
+    void sendMessage(Player * const player, QString message);
+
+signals:
+    void canMatch();
 
 private slots:
     void acceptConnection();
     void onDisConnect();
-    void onReadyRead();
+    void doRequest();
+    void doMatch();
+    void showError(QAbstractSocket::SocketError);
 };
 
 #endif // WIDGET_H
