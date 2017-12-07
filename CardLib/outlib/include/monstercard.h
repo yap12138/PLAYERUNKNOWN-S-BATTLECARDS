@@ -17,7 +17,7 @@ public:
     MonsterCard(const MonsterCard&);
     //virtual ~MonsterCard();
 
-    virtual int skill() = 0;    //卡牌效果
+    virtual int skill();    //卡牌效果
     virtual int getCategory() const;
 
     inline int getAttack() const { return this->_attack; }

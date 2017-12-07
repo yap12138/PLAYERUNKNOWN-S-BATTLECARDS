@@ -20,6 +20,11 @@ ArmsCard::ArmsCard(const ArmsCard & other)
     this->_owner = nullptr;
 }
 
+int ArmsCard::skill()
+{
+    return -1;
+}
+
 int ArmsCard::getCategory() const
 {
     return this->_category;

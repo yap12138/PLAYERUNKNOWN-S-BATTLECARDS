@@ -13,7 +13,7 @@ public:
     explicit MagicCard(QString &name, QString &description, const int consume = 0);
     MagicCard(const MagicCard &);
 
-    virtual int skill() = 0;    //卡牌效果
+    virtual int skill();    //卡牌效果
     virtual int getCategory() const;
 
     friend QDataStream &operator<<(QDataStream &, const MagicCard &);

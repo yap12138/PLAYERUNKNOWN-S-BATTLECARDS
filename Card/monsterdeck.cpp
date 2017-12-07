@@ -12,7 +12,7 @@ Monster_DragonBorn::Monster_DragonBorn()
 
 int Monster_DragonBorn::getCategory()
 {
-    return _category;
+    return Monster_DragonBorn::_category;
 }
 
 Monster_DogInScau::Monster_DogInScau()
@@ -30,5 +30,5 @@ int Monster_DogInScau::skill()
 
 int Monster_DogInScau::getCategory()
 {
-      return _category;
+      return Monster_DogInScau::_category;
 }

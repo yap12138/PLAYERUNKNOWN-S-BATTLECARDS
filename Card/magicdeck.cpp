@@ -14,7 +14,7 @@ int Magic_FireBall::skill()
 
 int Magic_FireBall::getCategory() const
 {
-    return _category;
+    return Magic_FireBall::_category;
 }
 
 Magic_WakeUp::Magic_WakeUp()
@@ -31,7 +31,7 @@ int Magic_WakeUp::skill()
 
 int Magic_WakeUp::getCategory() const
 {
-    return _category;
+    return Magic_WakeUp::_category;
 }
 
 Magic_KingSpell::Magic_KingSpell()
@@ -48,5 +48,5 @@ int Magic_KingSpell::skill()
 
 int Magic_KingSpell::getCategory() const
 {
-    return _category;
+    return Magic_KingSpell::_category;
 }
