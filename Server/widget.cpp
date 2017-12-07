@@ -21,10 +21,14 @@ void Widget::initServer()
     //_localHost = getHostConnectedIP();
     _localHost = QHostAddress(QHostAddress::LocalHost);
     _server->listen(_localHost, 5000);
-    this->ui->lab_server->setText(localHost.toString());
     connect(_server, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
+    this->ui->lab_server->setText(_localHost.toString());
 }
 
+/**
+ * @brief Widget::getHostConnectedIP 获取本地可用ip
+ * @return
+ */
 QHostAddress Widget::getHostConnectedIP() const
 {
     QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
@@ -35,7 +39,7 @@ QHostAddress Widget::getHostConnectedIP() const
         {
             QList<QNetworkAddressEntry> qlist = interface.addressEntries();
             //qDebug()<<interface.humanReadableName();
-            if (interface.humanReadableName().contains("VirtualBox") || interface.humanReadableName().contains("本地连接") )
+            if (interface.humanReadableName().contains("VirtualBox") || interface.humanReadableName().contains("本地连接"))
                 continue;
             foreach (QNetworkAddressEntry address, qlist) {
                 if (address.ip().protocol() == QAbstractSocket::IPv4Protocol)
@@ -49,9 +53,29 @@ QHostAddress Widget::getHostConnectedIP() const
     throw QString("ip not found");
 }
 
-QString Widget::getKeyFromSocket(const QTcpSocket * socket) const
+/**
+ * @brief Widget::getPlayerFromSocket 用socket找出对应的player
+ * @param socket
+ * @return
+ */
+Player *Widget::getPlayerFromSocket(QTcpSocket const * socket) const
 {
-    return socket->peerAddress().toString()+" : "+QString::number(socket->peerPort());
+    //先在匹配队列找
+    foreach (auto var, this->_playerList) {
+        if ( &(var->getSocket()) == socket )
+            return var;
+    }
+    //匹配对局里找
+    QTcpSocket* tSocket = const_cast<QTcpSocket *>(socket);
+    PlayerPair temp = this->_matchedList[tSocket];
+    if ( &(temp.first->getSocket()) == socket )
+    {
+        return temp.first;
+    }
+    else
+    {
+        return temp.second;
+    }
 }
 
 void Widget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
@@ -59,14 +83,17 @@ void Widget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
     QString name;
     stream>>name;
     qDebug()<<name;
-    cKey key = this->_clientList.key(socket);
-    if (key.first == 1) {
+    Player * var = getPlayerFromSocket(socket);
+
+    var->setPlayerName(name);
+
+    /*if (key.first == 1) {
         this->ui->lab_client1_name->setText(name);
     }
     else
     {
         this->ui->lab_client2_name->setText(name);
-    }
+    }*/
 }
 
 void Widget::acceptConnection()
@@ -75,9 +102,25 @@ void Widget::acceptConnection()
     qDebug()<<"new connect"<<clientConnection->localAddress().toString();
     connect(clientConnection, SIGNAL(disconnected()), this, SLOT(onDisConnect()));
     connect(clientConnection, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-    QString keyString = getKeyFromSocket(clientConnection);
+    //如果有可以匹配的玩家，则与之匹配，开始游戏
+    if ( !this->_playerList.isEmpty() )
+    {
+        Player* p1 = this->_playerList.dequeue();
+        Player* p2 = new Player(clientConnection, this);
+        PlayerPair pair(p1, p2);
+        this->_matchedList.insert(&(p1->getSocket()), pair);
+        this->_matchedList.insert(clientConnection, pair);
+        qDebug()<<"match succeed";
+        //TODO 给双方发送匹配成功
+    }
+    else
+    {
+        //暂时无玩家匹配，进入队列等待
+        Player* player = new Player(clientConnection, this);
+        this->_playerList.enqueue(player);
+    }
 
-    if (this->_clientList.size()==0)
+    /*if (this->_clientList.size()==0)
     {
         cKey key(1, keyString);
         this->_clientList.insert(key, clientConnection);
@@ -88,21 +131,23 @@ void Widget::acceptConnection()
         cKey key(2, keyString);
         this->_clientList.insert(key, clientConnection);
         this->ui->lab_client2->setText(keyString);
-        //_server->pauseAccepting();
-        _server->close();
+        //_server->close();
 
-    }
-    qDebug()<<"list new size:"<<this->_clientList.size();
+    }*/
+    qDebug()<<"list new size:"<<this->_playerList.size();
 
 }
 
 void Widget::onDisConnect()
 {
-    int rec = this->_clientList.size();
+    int rec = this->_playerList.size();
     QTcpSocket* disSocket = qobject_cast<QTcpSocket*> (sender());
-    cKey key = this->_clientList.key(disSocket);
-    this->_clientList.remove(key);
-    qDebug()<<"list new size:"<<this->_clientList.size();
+    Player * tPlayer = getPlayerFromSocket( disSocket );
+    if ( this->_playerList.contains(tPlayer) )    //是否还没匹配就掉了
+    {
+        this->_playerList.removeOne(tPlayer);
+    }
+    qDebug()<<"list new size:"<<this->_playerList.size();
     disSocket->deleteLater();
     if (rec==1)
     {
@@ -111,10 +156,9 @@ void Widget::onDisConnect()
     }
     else if (rec==2)
     {
-        //_server->resumeAccepting();
         this->ui->lab_client2->setText(QStringLiteral(" "));
         this->ui->lab_client2_name->setText(QStringLiteral(" "));
-        _server->listen(_localHost, 5000);
+        //_server->listen(_localHost, 5000);
     }
 }
 
