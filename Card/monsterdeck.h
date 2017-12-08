@@ -3,8 +3,12 @@
 #include "monstercard.h"
 #include "card.h"
 namespace PUBC {
-class Monster_DragonBorn;
-class Monster_DogInScau;
+    class Monster_DragonBorn;
+    class Monster_DogInScau;
+    class Monster_CrazyCow;
+    class Monster_Devil;
+    class Monster_WhiteFriend;
+    class Monster_Peashooter;
 }
 
 class CARDSHARED_EXPORT Monster_DragonBorn : public MonsterCard{
@@ -40,5 +44,23 @@ public:
     virtual int getCategory();
 private:
     static const int _category = 13;
+};
+
+class CARDSHARED_EXPORT Monster_WhiteFriend : public MonsterCard{
+public:
+    Monster_WhiteFriend();
+    virtual int skill();
+    virtual int getCategory();
+private:
+    static const int _category = 14;
+};
+
+class CARDSHARED_EXPORT Monster_Peashooter : public MonsterCard{
+public:
+    Monster_Peashooter();
+    virtual int skill();
+    virtual int getCategory();
+private:
+    static const int _category = 15;
 };
 #endif // MONSTERDECK_H

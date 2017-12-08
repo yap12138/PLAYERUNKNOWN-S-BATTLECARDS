@@ -1,9 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-
 #include <QObject>
 #include <QTcpSocket>
-
+#include "carddeck.h"
 
 class Player : public QObject
 {

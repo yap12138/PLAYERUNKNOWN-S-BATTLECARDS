@@ -5,9 +5,11 @@
 
 
 namespace  PUBC {
- class Magic_FireBall;
- class Magic_KingSpell;
- class Magic_WakeUp;
+    class Magic_FireBall;
+    class Magic_KingSpell;
+    class Magic_WakeUp;
+    class Magic_WindStrom;
+    class Magic_AGiftFromTeacher;
 }
 
 class CARDSHARED_EXPORT Magic_FireBall: public MagicCard{
@@ -53,6 +55,16 @@ public:
 
 protected:
     static const int _category = 23;
+};
+
+class CARDSHARED_EXPORT Magic_AGiftFromTeacher: public MagicCard{
+public:
+    Magic_AGiftFromTeacher();
+    virtual int skill();
+    virtual int getCategory() const;
+
+protected:
+    static const int _category = 24;
 };
 
 

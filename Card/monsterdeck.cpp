@@ -20,8 +20,8 @@ Monster_DogInScau::Monster_DogInScau()
 {
     *this->_name = "华农的狗";
     *this->_description = "这是一条来自华农的狗  (ΦωΦ)  总喜欢狂吠";
-    _attack = 5;
-    _consume = 4;
+    _attack = 3;
+    _consume = 3;
     _hasSkill = true;
 }
 
@@ -77,4 +77,44 @@ int Monster_Devil::skill()
 int Monster_Devil::getCategory()
 {
     return Monster_Devil::_category;
+}
+
+Monster_WhiteFriend::Monster_WhiteFriend()
+{
+    *this->_name = "五五开的好友";
+    *this->_description = "人类臆想的生物, 曾为某电竞主播挡刀";
+    this->_attack = 2;
+    this->_consume = 3;
+    _hasSkill = true;
+}
+
+int Monster_WhiteFriend::skill()
+{
+    //TODO 五五开的好友: 嘲讽， 随机对一个怪造成3伤害。
+    return 1;
+}
+
+int Monster_WhiteFriend::getCategory()
+{
+    return Monster_WhiteFriend::_category;
+}
+
+
+Monster_Peashooter::Monster_Peashooter()
+{
+    *this->_name = "豌豆射手";
+    *this->_description = "豌豆射手可谓你的第一道防线，他们朝来犯的敌人射击豌豆。";
+    this->_attack = 2;
+    this->_consume = 2;
+    _hasSkill = false;
+}
+
+int Monster_Peashooter::skill()
+{
+    return -1;
+}
+
+int Monster_Peashooter::getCategory()
+{
+    return Monster_Peashooter::_category;
 }

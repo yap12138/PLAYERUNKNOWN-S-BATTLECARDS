@@ -73,3 +73,21 @@ int Arms_DeathfireStaff::getCategory() const
 {
     return Arms_DeathfireStaff::_category;
 }
+
+Arms_Nokia::Arms_Nokia()
+{
+    *_name = "诺基亚";
+    *_description = "充满悲情色彩的手机";
+    this->_consume = 9;
+    this->_attackBuff = 10;
+}
+
+int Arms_Nokia::skill()
+{
+    return this->_attackBuff;
+}
+
+int Arms_Nokia::getCategory() const
+{
+    return Arms_Nokia::_category;
+}
