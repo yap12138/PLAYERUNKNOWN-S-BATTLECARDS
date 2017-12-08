@@ -27,8 +27,8 @@ public:
 
     ArmsCard & operator = (const ArmsCard & other);
     ArmsCard & operator - (MonsterCard &);
-    friend QDataStream &operator<<(QDataStream &, const ArmsCard &);
-    friend QDataStream &operator>>(QDataStream &, ArmsCard &);
+    CARDSHARED_EXPORT friend QDataStream &operator<<(QDataStream &, const ArmsCard &);
+    CARDSHARED_EXPORT friend QDataStream &operator>>(QDataStream &, ArmsCard &);
 protected:
     static const int _category = 3;  //卡牌种类
 

@@ -84,14 +84,12 @@ MonsterCard &MonsterCard::operator -(MonsterCard & enemy)
 QDataStream &operator<<(QDataStream & stream, const MonsterCard & data)
 {
     stream << (const Card &) data;
-    stream << data._attack << data._hasSkill;
     return stream;
 }
 
 QDataStream &operator>>(QDataStream & stream, MonsterCard & card)
 {
     stream >> (Card &) card;
-    stream >> card._attack >> card._hasSkill;
     return stream;
 }
 

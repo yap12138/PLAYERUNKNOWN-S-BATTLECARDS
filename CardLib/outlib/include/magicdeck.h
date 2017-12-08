@@ -5,9 +5,11 @@
 
 
 namespace  PUBC {
- class Magic_FireBall;
- class Magic_KingSpell;
- class Magic_WakeUp;
+    class Magic_FireBall;
+    class Magic_KingSpell;
+    class Magic_WakeUp;
+    class Magic_WindStrom;
+    class Magic_AGiftFromTeacher;
 }
 
 class CARDSHARED_EXPORT Magic_FireBall: public MagicCard{
@@ -15,7 +17,13 @@ public:
     Magic_FireBall();
     virtual int skill();
     virtual int getCategory() const;
+
+    void setTarget_id(int target_id);
+
 private:
+    int _target_id;
+
+protected:
     static const int _category = 20;
 };
 
@@ -24,7 +32,8 @@ public:
     Magic_WakeUp();
     virtual int skill();
     virtual int getCategory() const;
-
+protected:
+    static const int _category = 21;
 };
 
 class CARDSHARED_EXPORT Magic_KingSpell: public MagicCard{
@@ -33,7 +42,30 @@ public:
     virtual int skill();
     virtual int getCategory() const;
 private:
+    int _target_id;
+protected:
     static const int _category = 22;
 };
+
+class CARDSHARED_EXPORT Magic_WindStrom: public MagicCard{
+public:
+    Magic_WindStrom();
+    virtual int skill();
+    virtual int getCategory() const;
+
+protected:
+    static const int _category = 23;
+};
+
+class CARDSHARED_EXPORT Magic_AGiftFromTeacher: public MagicCard{
+public:
+    Magic_AGiftFromTeacher();
+    virtual int skill();
+    virtual int getCategory() const;
+
+protected:
+    static const int _category = 24;
+};
+
 
 #endif // MAGICDECK_H

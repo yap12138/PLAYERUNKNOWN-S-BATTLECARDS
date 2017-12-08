@@ -96,3 +96,20 @@ int Magic_WindStrom::getCategory() const
 {
     return Magic_WindStrom::_category;
 }
+
+Magic_AGiftFromTeacher::Magic_AGiftFromTeacher()
+{
+    *_name = "老师的馈赠";
+    *_description = "本回合法力值增加至10，但你的下一个回合法力值将为0";
+    _consume = 0;
+}
+
+int Magic_AGiftFromTeacher::skill()
+{
+    return 1;
+}
+
+int Magic_AGiftFromTeacher::getCategory() const
+{
+    return Magic_AGiftFromTeacher::_category;
+}

@@ -7,6 +7,10 @@ namespace PUBC {
     class Arms_InfinityEdge;
     class Arms_ArchangelSword;
     class Arms_DeathfireStaff;
+<<<<<<< HEAD
+=======
+    class Arms_Nokia;
+>>>>>>> 0cf21942e19f7fc7c37b5df227f30e256bed9315
 }
 
 /**
@@ -69,5 +73,23 @@ protected:
     static const int _category = 34;  //卡牌种类
 };
 
+<<<<<<< HEAD
+=======
+/**
+ * @brief The Arms_Nokia class
+ */
+class CARDSHARED_EXPORT Arms_Nokia : public ArmsCard
+{
+public:
+    Arms_Nokia();
+
+    virtual int skill();
+    virtual int getCategory() const;
+
+protected:
+    static const int _category = 35;  //卡牌种类
+};
+
+>>>>>>> 0cf21942e19f7fc7c37b5df227f30e256bed9315
 
 #endif // ARMSDECK_H

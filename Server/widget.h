@@ -1,15 +1,16 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 //#pragma execution_character_set("utf-8")
-
 #include <QWidget>
 #include <QtNetwork>
 #include <QHash>
+#include <QQueue>
 #include <utility>
+#include "player.h"
 
-using std::pair;
+//using std::pair;
 
-typedef pair<int, QString> cKey;    //存放客户端socket的Hash容器的键
+typedef std::pair<Player *, Player *> PlayerPair;
 
 namespace Ui {
 class Widget;
@@ -25,19 +26,31 @@ public:
 private:
     Ui::Widget *ui;
     QTcpServer *_server;
-    QHash<cKey, QTcpSocket *> _clientList;
+    QHostAddress _localHost;
+    QQueue<Player *> _playerQueue;
+    QHash<QTcpSocket *, PlayerPair> _matchedList;
 
 private:
     void initServer();
+    void initConnect();
     QHostAddress getHostConnectedIP() const;
-    QString getKeyFromSocket(const QTcpSocket*) const;
+    Player* getPlayerFromSocket(QTcpSocket const *) const;
+    Player* getEnemyFromSocket(QTcpSocket const *) const;
 
     void getClientInfo(QTcpSocket* const socket, QDataStream & stream);
+
+    void sendMessage( Player* const player, int message);
+    void sendMessage(Player * const player, QString message);
+
+signals:
+    void canMatch();
 
 private slots:
     void acceptConnection();
     void onDisConnect();
-    void onReadyRead();
+    void doRequest();
+    void doMatch();
+    void showError(QAbstractSocket::SocketError);
 };
 
 #endif // WIDGET_H

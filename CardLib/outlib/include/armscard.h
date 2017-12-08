@@ -17,7 +17,7 @@ public:
     explicit ArmsCard(QString &name, QString &description, const int consume = 0, int attackBuff = 0);
     ArmsCard(const ArmsCard &);
 
-    virtual int skill();
+    virtual int skill();    //一般返回卡牌攻击，特殊则处理攻击里加持值
     virtual int getCategory() const;
 
     inline int getAttackBuf() const { return this->_attackBuff; }
@@ -27,8 +27,8 @@ public:
 
     ArmsCard & operator = (const ArmsCard & other);
     ArmsCard & operator - (MonsterCard &);
-    friend QDataStream &operator<<(QDataStream &, const ArmsCard &);
-    friend QDataStream &operator>>(QDataStream &, ArmsCard &);
+    CARDSHARED_EXPORT friend QDataStream &operator<<(QDataStream &, const ArmsCard &);
+    CARDSHARED_EXPORT friend QDataStream &operator>>(QDataStream &, ArmsCard &);
 protected:
     static const int _category = 3;  //卡牌种类
 
