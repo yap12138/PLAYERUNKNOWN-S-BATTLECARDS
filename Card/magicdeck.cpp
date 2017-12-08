@@ -18,6 +18,7 @@ int Magic_FireBall::skill()
 //    out<<this->_id;
 //    out<<this->_target_id;
 //    socket->flush();
+    return 1;
 }
 
 int Magic_FireBall::getCategory() const
@@ -46,6 +47,7 @@ int Magic_WakeUp::skill()
 //    out<<3;
 //    out<<2;
 //    socket->flush();
+    return -1;
 }
 
 int Magic_WakeUp::getCategory() const
@@ -70,6 +72,7 @@ int Magic_KingSpell::skill()
 //    out<<this->_id;
 //    out<<this->_target_id;
 //    socket->flush();
+    return -1;
 }
 
 int Magic_KingSpell::getCategory() const

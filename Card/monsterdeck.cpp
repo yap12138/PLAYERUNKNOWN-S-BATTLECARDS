@@ -26,9 +26,11 @@ Monster_DogInScau::Monster_DogInScau()
 int Monster_DogInScau::skill()
 {
     //TODO 华农的狗： 嘲讽
+
+    return -1;
 }
 
 int Monster_DogInScau::getCategory()
 {
-      return Monster_DogInScau::_category;
+    return Monster_DogInScau::_category;
 }

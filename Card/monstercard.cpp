@@ -50,6 +50,8 @@ MonsterCard &MonsterCard::operator =(const MonsterCard & other)
 void MonsterCard::operator +(ArmsCard &arm)
 {
     this->_arms = &arm;
+    arm._owner = this;
+    arm.skill();
 }
 
 MonsterCard &MonsterCard::operator -(MonsterCard & enemy)
