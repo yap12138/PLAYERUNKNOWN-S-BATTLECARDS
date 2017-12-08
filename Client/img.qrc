@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/cardWidget">
+        <file>resoure/img/attack.png</file>
+        <file>resoure/img/card_bg.png</file>
+        <file>resoure/img/consume.png</file>
+    </qresource>
+</RCC>
