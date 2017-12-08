@@ -12,6 +12,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Client
 TEMPLATE = app
 
+INCLUDEPATH += ./../CardLib/outlib/include
+LIBS += -L"./../CardLib/outlib/lib" -lCard
+LIBS += -L"./../CardLib/outlib/bin"
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -27,15 +31,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     connectwidget.cpp\
         main.cpp \
-    mainwidget.cpp
+    mainwidget.cpp \
+    cardwidget.cpp
 
 HEADERS += \
     connectwidget.h\
-    mainwidget.h
+    mainwidget.h \
+    cardwidget.h
 
 FORMS += \
     connectwidget.ui\
-    mainwidget.ui
-INCLUDEPATH += ./../CardLib/outlib/include
-LIBS += -L"./../CardLib/outlib/lib" -lCard
-LIBS += -L"./../CardLib/outlib/bin"
+    mainwidget.ui \
+    cardwidget.ui
+
+RESOURCES += \
+    img.qrc
+
+
