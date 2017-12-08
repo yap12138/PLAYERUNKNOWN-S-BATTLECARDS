@@ -109,13 +109,6 @@ void Widget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
     var->setPlayerName(name);
     if (_playerQueue.size() >= 2)
         emit canMatch();
-    /*if (key.first == 1) {
-        this->ui->lab_client1_name->setText(name);
-    }
-    else
-    {
-        this->ui->lab_client2_name->setText(name);
-    }*/
 }
 
 void Widget::acceptConnection()
@@ -128,27 +121,13 @@ void Widget::acceptConnection()
     //玩家连接，进入队列等待
     Player* player = new Player(clientConnection, this);
     this->_playerQueue.enqueue(player);
-    /*if (this->_clientList.size()==0)
-    {
-        cKey key(1, keyString);
-        this->_clientList.insert(key, clientConnection);
-        this->ui->lab_client1->setText(keyString);
-    }
-    else if (this->_clientList.size()==1)
-    {
-        cKey key(2, keyString);
-        this->_clientList.insert(key, clientConnection);
-        this->ui->lab_client2->setText(keyString);
-        //_server->close();
 
-    }*/
     qDebug()<<"list new size:"<<this->_playerQueue.size();
 
 }
 
 void Widget::onDisConnect()
 {
-    int rec = this->_playerQueue.size();
     QTcpSocket* disSocket = qobject_cast<QTcpSocket*> (sender());
 
 //    QProcess* cmd = new QProcess;
@@ -169,17 +148,23 @@ void Widget::onDisConnect()
     {
         this->_playerQueue.removeOne(tPlayer);
 
-    } else     //对局中掉线，直接整局游戏结束
+    }
+    else     //对局中掉线，直接整局游戏结束
     {
-        //TODO 发送给对方，己方已经断开，游戏结束
-
         PlayerPair tPair = this->_matchedList[disSocket];
         Player * ePlayer = getEnemyFromSocket(disSocket);
+        QTcpSocket * enemySocket = &(ePlayer->getSocket());
+        //发送给对方，己方已经断开，游戏结束
+        QDataStream out(enemySocket);
+        out.setVersion(QDataStream::Qt_5_9);
+        out<<8;
+        enemySocket->flush();
+
         this->_playerQueue.enqueue(ePlayer);        //将对手放回就绪匹配队列
         this->_matchedList.remove(&(tPair.first->getSocket()));
         this->_matchedList.remove(&(tPair.second->getSocket()));
     }
-    qDebug()<<"list new size:"<<this->_playerQueue.size();
+    qDebug()<<"queue new size:"<<this->_playerQueue.size();
     disSocket->deleteLater();
     /*if (rec==1)
     {
@@ -217,8 +202,8 @@ void Widget::doMatch()
     PlayerPair pair(p1, p2);
     this->_matchedList.insert(&(p1->getSocket()), pair);
     this->_matchedList.insert(&(p2->getSocket()), pair);
-    qDebug()<<"match succeed";
-    //TODO 给双方发送匹配成功
+    qDebug()<<"match succeed\n"<<"have "<<this->_matchedList.size()/2<<" match pair";
+    //给双方发送匹配成功
     sendMessage(p1, 0);
     sendMessage(p1, p2->getPlayerName());
     p1->getSocket().flush();
@@ -230,6 +215,7 @@ void Widget::doMatch()
 void Widget::showError(QAbstractSocket::SocketError e)
 {
     qDebug()<< e;
+    this->ui->label->styleSheet()
 }
 
 void Widget::sendMessage(Player* const player, int message){
