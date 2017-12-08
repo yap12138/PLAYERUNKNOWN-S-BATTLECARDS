@@ -1,7 +1,5 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include <QTimer>
-#include <QProcess>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -107,6 +105,7 @@ void Widget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
     qDebug()<<name;
     Player * var = getPlayerFromSocket(socket);
     var->setPlayerName(name);
+
     if (_playerQueue.size() >= 2)
         emit canMatch();
 }
@@ -122,7 +121,7 @@ void Widget::acceptConnection()
     Player* player = new Player(clientConnection, this);
     this->_playerQueue.enqueue(player);
 
-    qDebug()<<"list new size:"<<this->_playerQueue.size();
+    qDebug()<<"queue new size:"<<this->_playerQueue.size();
 
 }
 
@@ -166,21 +165,11 @@ void Widget::onDisConnect()
     }
     qDebug()<<"queue new size:"<<this->_playerQueue.size();
     disSocket->deleteLater();
-    /*if (rec==1)
-    {
-        this->ui->lab_client1->setText(QStringLiteral(" "));
-        this->ui->lab_client1_name->setText(QStringLiteral(" "));
-    }
-    else if (rec==2)
-    {
-        this->ui->lab_client2->setText(QStringLiteral(" "));
-        this->ui->lab_client2_name->setText(QStringLiteral(" "));
-        //_server->listen(_localHost, 5000);
-    }*/
 }
 
 void Widget::doRequest()
 {
+    qDebug()<<"new request";
     QTcpSocket* rev = static_cast<QTcpSocket*>(sender());
     QDataStream in(rev);
     in.setVersion(QDataStream::Qt_5_9);
@@ -189,6 +178,8 @@ void Widget::doRequest()
     switch (msgCategory) {
     case 0:
         getClientInfo(rev, in);
+        break;
+
         break;
     default:
         break;
@@ -215,7 +206,6 @@ void Widget::doMatch()
 void Widget::showError(QAbstractSocket::SocketError e)
 {
     qDebug()<< e;
-    this->ui->label->styleSheet()
 }
 
 void Widget::sendMessage(Player* const player, int message){

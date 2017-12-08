@@ -2,6 +2,7 @@
 #define PLAYER_H
 #include <QObject>
 #include <QTcpSocket>
+#include <QList>
 #include "carddeck.h"
 
 class Player : public QObject
@@ -16,7 +17,8 @@ public:
 
 private:
     QTcpSocket & _clientSocket; //和客户端的连接
-    QString _playerName;
+    QString _playerName;        //玩家名字
+    QList<Card *> _totalCardDeck;
 
 signals:
 

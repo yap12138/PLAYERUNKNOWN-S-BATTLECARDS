@@ -31,8 +31,8 @@ public:
     inline void setTAG(QObject& tag) { this->_Tag = &tag; }
 
     Card &operator = (const Card &);   //重载赋值运算符
-    friend QDataStream &operator<<(QDataStream &, const Card &);
-    friend QDataStream &operator>>(QDataStream &, Card &);
+    CARDSHARED_EXPORT friend QDataStream &operator<<(QDataStream &, const Card &);
+    CARDSHARED_EXPORT friend QDataStream &operator>>(QDataStream &, Card &);
 private:
     static int _count;
     int _id;    //唯一id

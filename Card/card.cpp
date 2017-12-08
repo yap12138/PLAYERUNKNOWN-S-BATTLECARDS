@@ -64,7 +64,7 @@ QDataStream &operator<<(QDataStream & outStream, const Card & dataCard)
     if (outStream.version()!=QDataStream::Qt_5_9)
         outStream.setVersion(QDataStream::Qt_5_9);
     outStream << dataCard.getCategory();  //输出卡片类别信息，给服务端做处理
-    outStream << dataCard._id << (*dataCard._name) << (*dataCard._description) << dataCard._consume;
+    outStream << dataCard._id;
     return outStream;
 }
 
@@ -72,7 +72,7 @@ QDataStream &operator>>(QDataStream &inStream, Card & dataCard)
 {
     if (inStream.version()!=QDataStream::Qt_5_9)
         inStream.setVersion(QDataStream::Qt_5_9);
-    inStream >> dataCard._id >> (*dataCard._name) >> (*dataCard._description) >> dataCard._consume;
+    inStream >> dataCard._id;
     return inStream;
 }
 

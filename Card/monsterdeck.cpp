@@ -11,7 +11,7 @@ Monster_DragonBorn::Monster_DragonBorn()
     _consume = 5;
 }
 
-int Monster_DragonBorn::getCategory()
+int Monster_DragonBorn::getCategory() const
 {
     return Monster_DragonBorn::_category;
 }
@@ -32,7 +32,7 @@ int Monster_DogInScau::skill()
     return 1;
 }
 
-int Monster_DogInScau::getCategory()
+int Monster_DogInScau::getCategory() const
 {
     return Monster_DogInScau::_category;
 }
@@ -56,7 +56,7 @@ int Monster_CrazyCow::skill()
     return 1;
 }
 
-int Monster_CrazyCow::getCategory()
+int Monster_CrazyCow::getCategory() const
 {
     return Monster_CrazyCow::_category;
 }
@@ -74,7 +74,7 @@ int Monster_Devil::skill()
     return -1;
 }
 
-int Monster_Devil::getCategory()
+int Monster_Devil::getCategory() const
 {
     return Monster_Devil::_category;
 }
@@ -94,7 +94,7 @@ int Monster_WhiteFriend::skill()
     return 1;
 }
 
-int Monster_WhiteFriend::getCategory()
+int Monster_WhiteFriend::getCategory() const
 {
     return Monster_WhiteFriend::_category;
 }
@@ -114,7 +114,7 @@ int Monster_Peashooter::skill()
     return -1;
 }
 
-int Monster_Peashooter::getCategory()
+int Monster_Peashooter::getCategory() const
 {
     return Monster_Peashooter::_category;
 }

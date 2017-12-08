@@ -30,8 +30,8 @@ public:
 
     void operator + (ArmsCard &);
     MonsterCard & operator - (MonsterCard &);
-    friend QDataStream &operator<<(QDataStream &, const MonsterCard &);
-    friend QDataStream &operator>>(QDataStream &, MonsterCard &);
+    CARDSHARED_EXPORT friend QDataStream &operator<<(QDataStream &, const MonsterCard &);
+    CARDSHARED_EXPORT friend QDataStream &operator>>(QDataStream &, MonsterCard &);
 protected:
     static const int _category = 1;  //卡牌种类
 
