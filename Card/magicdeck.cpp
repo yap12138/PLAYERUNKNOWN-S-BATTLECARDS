@@ -47,7 +47,7 @@ int Magic_WakeUp::skill()
 //    out<<3;
 //    out<<2;
 //    socket->flush();
-    return -1;
+    return 1;
 }
 
 int Magic_WakeUp::getCategory() const
@@ -72,10 +72,27 @@ int Magic_KingSpell::skill()
 //    out<<this->_id;
 //    out<<this->_target_id;
 //    socket->flush();
-    return -1;
+    return 1;
 }
 
 int Magic_KingSpell::getCategory() const
 {
     return Magic_KingSpell::_category;
+}
+
+Magic_WindStrom::Magic_WindStrom()
+{
+    *_name = "风暴";
+    *_description = "风暴席卷战场，全场怪物的攻击降低4点";
+    _consume = 10;
+}
+
+int Magic_WindStrom::skill()
+{
+    return 1;
+}
+
+int Magic_WindStrom::getCategory() const
+{
+    return Magic_WindStrom::_category;
 }

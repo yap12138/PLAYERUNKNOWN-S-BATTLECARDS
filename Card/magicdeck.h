@@ -45,4 +45,15 @@ protected:
     static const int _category = 22;
 };
 
+class CARDSHARED_EXPORT Magic_WindStrom: public MagicCard{
+public:
+    Magic_WindStrom();
+    virtual int skill();
+    virtual int getCategory() const;
+
+protected:
+    static const int _category = 23;
+};
+
+
 #endif // MAGICDECK_H
