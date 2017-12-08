@@ -37,6 +37,11 @@ Card::~Card()
         delete _Tag;
 }
 
+int Card::skill()
+{
+    return -1;
+}
+
 int Card::getCategory() const
 {
     return this->_category;

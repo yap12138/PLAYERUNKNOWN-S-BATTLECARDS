@@ -21,6 +21,11 @@ MonsterCard::MonsterCard(const MonsterCard & other)
     this->_hasSkill = other._hasSkill;
 }
 
+int MonsterCard::skill()
+{
+    return -1;
+}
+
 //MonsterCard::~MonsterCard()
 //{
 //    if (this->_arms != nullptr)

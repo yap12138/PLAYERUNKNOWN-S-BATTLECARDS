@@ -17,7 +17,7 @@ public:
     explicit ArmsCard(QString &name, QString &description, const int consume = 0, int attackBuff = 0);
     ArmsCard(const ArmsCard &);
 
-    virtual int skill() = 0;
+    virtual int skill();
     virtual int getCategory() const;
 
     inline int getAttackBuf() const { return this->_attackBuff; }

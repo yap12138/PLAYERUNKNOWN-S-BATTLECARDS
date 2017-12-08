@@ -19,7 +19,7 @@ public:
     Card(const Card &);
     virtual ~Card();
 
-    virtual int skill() = 0;    //卡牌效果
+    virtual int skill();//卡牌效果
     virtual int getCategory() const;
 
     inline int getId() const { return this->_id; }

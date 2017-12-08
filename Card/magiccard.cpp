@@ -18,6 +18,11 @@ MagicCard::MagicCard(const MagicCard & other)
 
 }
 
+int MagicCard::skill()
+{
+    return -1;
+}
+
 int MagicCard::getCategory() const
 {
     return this->_category;
