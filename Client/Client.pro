@@ -27,15 +27,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     connectwidget.cpp\
         main.cpp \
-    mainwidget.cpp
+    mainwidget.cpp \
+    cardwidget.cpp
 
 HEADERS += \
     connectwidget.h\
-    mainwidget.h
+    mainwidget.h \
+    cardwidget.h
 
 FORMS += \
     connectwidget.ui\
-    mainwidget.ui
+    mainwidget.ui \
+    cardwidget.ui
 INCLUDEPATH += ./../CardLib/outlib/include
 LIBS += -L"./../CardLib/outlib/lib" -lCard
 LIBS += -L"./../CardLib/outlib/bin"
+
+RESOURCES += \
+    img.qrc
