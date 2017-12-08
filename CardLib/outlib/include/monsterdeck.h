@@ -23,4 +23,22 @@ public :
 private :
     static const int _category = 11;
 };
+
+class CARDSHARED_EXPORT Monster_CrazyCow : public MonsterCard{
+public:
+    Monster_CrazyCow();
+    virtual int skill();
+    virtual int getCategory();
+private:
+    static const int _category = 12;
+};
+
+class CARDSHARED_EXPORT Monster_Devil : public MonsterCard{
+public:
+    Monster_Devil();
+    virtual int skill();
+    virtual int getCategory();
+private:
+    static const int _category = 13;
+};
 #endif // MONSTERDECK_H
