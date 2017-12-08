@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += widgets
+QT       += network
 #DESTDIR = bin
 TARGET = Card
 TEMPLATE = lib
@@ -28,7 +29,8 @@ SOURCES += \
     magiccard.cpp \
     armscard.cpp \
     magicdeck.cpp \
-    monsterdeck.cpp
+    monsterdeck.cpp \
+    armsdeck.cpp
 
 HEADERS += \
         card.h \
@@ -37,7 +39,8 @@ HEADERS += \
     magiccard.h \
     armscard.h \
     magicdeck.h \
-    monsterdeck.h
+    monsterdeck.h \
+    armsdeck.h
 
 unix {
     target.path = /usr/lib

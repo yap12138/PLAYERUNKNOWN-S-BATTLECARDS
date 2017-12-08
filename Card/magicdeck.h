@@ -15,7 +15,13 @@ public:
     Magic_FireBall();
     virtual int skill();
     virtual int getCategory() const;
+
+    void setTarget_id(int target_id);
+
 private:
+    int _target_id;
+
+protected:
     static const int _category = 20;
 };
 
@@ -24,7 +30,8 @@ public:
     Magic_WakeUp();
     virtual int skill();
     virtual int getCategory() const;
-
+protected:
+    static const int _category = 21;
 };
 
 class CARDSHARED_EXPORT Magic_KingSpell: public MagicCard{
@@ -33,6 +40,8 @@ public:
     virtual int skill();
     virtual int getCategory() const;
 private:
+    int _target_id;
+protected:
     static const int _category = 22;
 };
 
