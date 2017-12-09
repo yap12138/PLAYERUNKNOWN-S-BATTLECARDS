@@ -13,28 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="_card_bg">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>300</width>
-     <height>400</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="img.qrc">:/cardWidget/resoure/img/card_bg.png</pixmap>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
-   </property>
-  </widget>
  </widget>
- <resources>
-  <include location="img.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

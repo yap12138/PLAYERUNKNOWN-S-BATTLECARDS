@@ -1,5 +1,6 @@
 #include "connectwidget.h"
 #include "ui_connectwidget.h"
+#include "cardwidget.h"
 
 ConnectWidget::ConnectWidget(QWidget *parent) :
     QWidget(parent),
@@ -7,6 +8,8 @@ ConnectWidget::ConnectWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     initClient();
+    CardWidget* cardWidget = new CardWidget(this, 2);
+    cardWidget->setGeometry(0,0,cardWidget->width(),cardWidget->height());
 }
 
 ConnectWidget::~ConnectWidget()
@@ -25,12 +28,12 @@ bool ConnectWidget::eventFilter(QObject *watched, QEvent *event)
     {
         if(event->type()==QEvent::MouseButtonPress)
         {
-            _client = new QTcpSocket(this);
-            _client->connectToHost(QHostAddress(ui->textEdit->toPlainText()),5000);
-            QDataStream s(_client);
-            s<<0;
-            s<<QStringLiteral("asd");
-            //sendMessage();
+//            _client = new QTcpSocket(this);
+//            _client->connectToHost(QHostAddress(ui->textEdit->toPlainText()),5000);
+//            QDataStream s(_client);
+//            s<<0;
+//            s<<QStringLiteral("asd");
+//            sendMessage();
             this->hide();
             return true;
         }

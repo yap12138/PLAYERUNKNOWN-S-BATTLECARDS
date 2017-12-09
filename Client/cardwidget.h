@@ -2,6 +2,8 @@
 #define CARDWIDGET_H
 
 #include <QWidget>
+#include <QLabel>
+//#include "mainwidget.h"
 
 namespace Ui {
 class CardWidget;
@@ -15,8 +17,25 @@ public:
     explicit CardWidget(QWidget *parent = 0, int mode = 1);
     ~CardWidget();
 
+    void setImage(const QPixmap &img);
+
+signals:
+    void SMyPointer(CardWidget*);
+
+public:
+    QLabel* _consume;
+    QLabel* _attack;
 private:
     Ui::CardWidget *ui;
+    QLabel* _card_bg;
+    QLabel* _consume_bg;
+    QLabel* _attack_bg;
+
+    QLabel* _card;
+
+    void setUpUi(int mode);
+protected:
+    void mousePressEvent(QMouseEvent *event);
 };
 
 #endif // CARDWIDGET_H

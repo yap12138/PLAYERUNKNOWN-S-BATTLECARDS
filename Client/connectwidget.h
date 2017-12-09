@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QtNetwork>
 #include <utility>
+#include <cardwidget.h>
 namespace Ui {
 class ConnectWidget;
 }
@@ -25,6 +26,7 @@ private:
     void initClient();
     QString getKeyFromSocket(const QTcpSocket*) const;
     void getClientInfo(QTcpSocket* const socket, QDataStream & stream);
+    CardWidget card;
 
 private slots:
     void acceptConnection();//接受连接，保存
