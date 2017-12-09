@@ -34,7 +34,7 @@ private:
         int cardNum = 0;//手牌数
         int consume = 0;//剩余费用
         int oddCards = 30;//牌库剩余
-        QHash<int,CardWidget> battleField;//战场上的怪物
+        QHash<int,CardWidget*> battleField;//战场上的怪物
     };
 
     //己方
@@ -45,7 +45,16 @@ private:
         int oddCards = 30;//牌库剩余
         QHash<Card*,CardWidget*> cardInHand;//手牌
         QHash<Card*,CardWidget*> battleField;//战场上的怪物
+        //QHash<int,Card*> idCard;
     };
+
+    struct WidgetMap{
+        int x;
+        int y;
+        bool hasCard = false;
+    };
+    //位置和窗口部件的结构体，包含着部件应该在的位置和该是否有部件
+
 
 private:
     Ui::Widget *ui;
@@ -56,9 +65,11 @@ private:
     enemuy _ePlayer;
     me _mPlayer;
     QTcpSocket *_client;
-    int _lastHandX;
-    int _lastHandY;
-    int _space = 50;
+    CardWidget* selectCard;//指向被选中的部件
+    CardWidget* targetCard;//指向目标部件
+    bool ChooseTarget = false;
+    WidgetMap handMap[5];
+    WidgetMap fieldMap[3];
 
 signals:
     void STurnStart(int consume,int category,Card& newCard);//回合开始
@@ -89,14 +100,19 @@ private slots:
 //    void CreateCard();//初始发牌
 //    void TauntSkill(int monsterID);//嘲讽发动了
 //    void Disconnected();//敌方断开连接
-      void Test();
+      void TestGetCard();
+      void TestPlayCard();
+      void TestDeleteCard();
+      void OnWidgetClicked(CardWidget*);
 
 private:
-    void initialazation();  //初始化界面
+void initialazation();  //初始化界面
 
     //信息处理
 void onReadyRead();//准备读取
 void sendMessage();//发送信息
+void InitMap();
+void setBackground();
 
 };
 

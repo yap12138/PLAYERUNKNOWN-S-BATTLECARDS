@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QLabel>
+//#include "mainwidget.h"
 
 namespace Ui {
 class CardWidget;
@@ -18,6 +19,9 @@ public:
 
     void setImage(const QPixmap &img);
 
+signals:
+    void SMyPointer(CardWidget*);
+
 public:
     QLabel* _consume;
     QLabel* _attack;
@@ -30,6 +34,8 @@ private:
     QLabel* _card;
 
     void setUpUi(int mode);
+protected:
+    void mousePressEvent(QMouseEvent *event);
 };
 
 #endif // CARDWIDGET_H

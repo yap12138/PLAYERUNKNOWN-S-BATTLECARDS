@@ -66,3 +66,8 @@ void CardWidget::setUpUi(int mode)
     this->_attack->setStyleSheet(QStringLiteral("color: rgb(255, 0, 4);"));
     this->_attack->setAlignment(Qt::AlignCenter);
 }
+
+void CardWidget::mousePressEvent(QMouseEvent *event)
+{
+    emit SMyPointer(this);
+}

@@ -4,4 +4,9 @@
         <file>resoure/img/card_bg.png</file>
         <file>resoure/img/consume.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>resoure/img/bg3.jpg</file>
+        <file>resoure/img/bg1.jpg</file>
+        <file>resoure/img/bg2.jpg</file>
+    </qresource>
 </RCC>
