@@ -15,6 +15,8 @@ public:
     inline const QString & getPlayerName() const { return this->_playerName; }
     inline void setPlayerName(QString & name) { this->_playerName = name; }
 
+    void initTotalCard();
+
 private:
     QTcpSocket & _clientSocket; //和客户端的连接
     QString _playerName;        //玩家名字

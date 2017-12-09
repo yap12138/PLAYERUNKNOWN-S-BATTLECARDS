@@ -26,11 +26,6 @@ int Magic_FireBall::getCategory() const
     return Magic_FireBall::_category;
 }
 
-void Magic_FireBall::setTarget_id(int target_id)
-{
-    _target_id = target_id;
-}
-
 Magic_WakeUp::Magic_WakeUp()
 {
     *_name = "苏醒";

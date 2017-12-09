@@ -18,11 +18,6 @@ public:
     virtual int skill();
     virtual int getCategory() const;
 
-    void setTarget_id(int target_id);
-
-private:
-    int _target_id;
-
 protected:
     static const int _category = 20;
 };
@@ -41,8 +36,6 @@ public:
     Magic_KingSpell();
     virtual int skill();
     virtual int getCategory() const;
-private:
-    int _target_id;
 protected:
     static const int _category = 22;
 };
