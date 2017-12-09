@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QList>
+#include <QQueue>
 #include "carddeck.h"
 
 class Player : public QObject
@@ -20,11 +21,16 @@ public:
 private:
     QTcpSocket & _clientSocket; //和客户端的连接
     QString _playerName;        //玩家名字
-    QList<Card *> _totalCardDeck;
+    QList<Card *> _totalCardDeck;   //玩家卡组
 
+    QQueue<int> _consumeForTurn;    //每回合得费队列
+
+    void initConsumQueue(); //初始化每回合得费队列
 signals:
+    void useCard();
 
 public slots:
+
 };
 
 #endif // PLAYER_H

@@ -1,7 +1,8 @@
-#include "widget.h"
+#include "bootstrap.h"
 #include "ui_widget.h"
+#include <QThread>
 
-Widget::Widget(QWidget *parent) :
+ServerBootstrap::ServerBootstrap(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
 {
@@ -10,13 +11,13 @@ Widget::Widget(QWidget *parent) :
     initConnect();
 }
 
-Widget::~Widget()
+ServerBootstrap::~ServerBootstrap()
 {
     delete ui;
     delete _server;
 }
 
-void Widget::initServer()
+void ServerBootstrap::initServer()
 {
     _server = new QTcpServer(this);
     //_localHost = getHostConnectedIP();
@@ -26,7 +27,7 @@ void Widget::initServer()
     this->ui->lab_server->setText(_localHost.toString());
 }
 
-void Widget::initConnect()
+void ServerBootstrap::initConnect()
 {
     connect(this, SIGNAL(canMatch()), this, SLOT(doMatch()), Qt::QueuedConnection);
 }
@@ -35,7 +36,7 @@ void Widget::initConnect()
  * @brief Widget::getHostConnectedIP 获取本地可用ip
  * @return
  */
-QHostAddress Widget::getHostConnectedIP() const
+QHostAddress ServerBootstrap::getHostConnectedIP() const
 {
     QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
     foreach (QNetworkInterface interface, list) {
@@ -64,41 +65,17 @@ QHostAddress Widget::getHostConnectedIP() const
  * @param socket
  * @return
  */
-Player *Widget::getPlayerFromSocket(QTcpSocket const * socket) const
+Player *ServerBootstrap::getPlayerFromSocket(QTcpSocket const * socket) const
 {
-    //先在匹配队列找
+    //在匹配队列找
     foreach (auto var, this->_playerQueue) {
         if ( &(var->getSocket()) == socket )
             return var;
     }
-    //匹配对局里找
-    QTcpSocket* tSocket = const_cast<QTcpSocket *>(socket);
-    PlayerPair temp = this->_matchedList[tSocket];
-    if ( &(temp.first->getSocket()) == socket )
-    {
-        return temp.first;
-    }
-    else
-    {
-        return temp.second;
-    }
+    return nullptr;
 }
 
-Player *Widget::getEnemyFromSocket(const QTcpSocket * socket) const
-{
-    QTcpSocket* tSocket = const_cast<QTcpSocket *>(socket);
-    PlayerPair temp = this->_matchedList[tSocket];
-    if ( &(temp.first->getSocket()) == socket )
-    {
-        return temp.second;
-    }
-    else
-    {
-        return temp.first;
-    }
-}
-
-void Widget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
+void ServerBootstrap::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
 {
     QString name;
     stream>>name;
@@ -110,7 +87,7 @@ void Widget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
         emit canMatch();
 }
 
-void Widget::acceptConnection()
+void ServerBootstrap::acceptConnection()
 {
     QTcpSocket* clientConnection = _server->nextPendingConnection();
     qDebug()<<"new connect"<<clientConnection->localAddress().toString();
@@ -122,10 +99,9 @@ void Widget::acceptConnection()
     this->_playerQueue.enqueue(player);
 
     qDebug()<<"queue new size:"<<this->_playerQueue.size();
-
 }
 
-void Widget::onDisConnect()
+void ServerBootstrap::onDisConnect()
 {
     QTcpSocket* disSocket = qobject_cast<QTcpSocket*> (sender());
 
@@ -143,31 +119,13 @@ void Widget::onDisConnect()
 //    }
 
     Player * tPlayer = getPlayerFromSocket( disSocket );
-    if ( this->_playerQueue.contains(tPlayer) )    //是否还没匹配就掉了
-    {
-        this->_playerQueue.removeOne(tPlayer);
+    this->_playerQueue.removeOne(tPlayer);
 
-    }
-    else     //对局中掉线，直接整局游戏结束
-    {
-        PlayerPair tPair = this->_matchedList[disSocket];
-        Player * ePlayer = getEnemyFromSocket(disSocket);
-        QTcpSocket * enemySocket = &(ePlayer->getSocket());
-        //发送给对方，己方已经断开，游戏结束
-        QDataStream out(enemySocket);
-        out.setVersion(QDataStream::Qt_5_9);
-        out<<8;
-        enemySocket->flush();
-
-        this->_playerQueue.enqueue(ePlayer);        //将对手放回就绪匹配队列
-        this->_matchedList.remove(&(tPair.first->getSocket()));
-        this->_matchedList.remove(&(tPair.second->getSocket()));
-    }
     qDebug()<<"queue new size:"<<this->_playerQueue.size();
     disSocket->deleteLater();
 }
 
-void Widget::doRequest()
+void ServerBootstrap::doRequest()
 {
     qDebug()<<"new request";
     QTcpSocket* rev = static_cast<QTcpSocket*>(sender());
@@ -179,36 +137,46 @@ void Widget::doRequest()
     case 0:
         getClientInfo(rev, in);
         break;
-
-        break;
     default:
         break;
     }
 }
 
-void Widget::doMatch()
+void ServerBootstrap::doMatch()
 {
     Player* p1 = this->_playerQueue.dequeue();
     Player* p2 = this->_playerQueue.dequeue();
-    PlayerPair pair(p1, p2);
-    this->_matchedList.insert(&(p1->getSocket()), pair);
-    this->_matchedList.insert(&(p2->getSocket()), pair);
+    //转移给服务线程处理
+    p1->getSocket().disconnect(this);
+    p2->getSocket().disconnect(this);
+
+    Server* server = new Server(p1, p2);
+    QThread * serverThread = new QThread(server);
+    server->moveToThread(serverThread);
+
+    connect(server, SIGNAL(resetPlayer(Player*,Server*)), this, SLOT(doReset(Player*,Server*)));
+    //保存对局信息
+    this->_matchedList.insert(p1, server);
+    this->_matchedList.insert(p2, server);
+
     qDebug()<<"match succeed\n"<<"have "<<this->_matchedList.size()/2<<" match pair";
-    //给双方发送匹配成功
-    sendMessage(p1, 0);
-    sendMessage(p1, p2->getPlayerName());
-    p1->getSocket().flush();
-    sendMessage(p2, 0);
-    sendMessage(p2, p1->getPlayerName());
-    p2->getSocket().flush();
 }
 
-void Widget::showError(QAbstractSocket::SocketError e)
+void ServerBootstrap::showError(QAbstractSocket::SocketError e)
 {
     qDebug()<< e;
 }
 
-void Widget::sendMessage(Player* const player, int message){
+void ServerBootstrap::doReset(Player * player, Server * server)
+{
+    qDebug()<<"remove "<<player->getPlayerName()<<" to queue";
+    this->_playerQueue.enqueue(player);        //将对手放回就绪匹配队列
+    this->_matchedList.remove(server->getPlayers().first);
+    this->_matchedList.remove(server->getPlayers().second);
+    server->deleteLater();
+}
+
+void ServerBootstrap::sendMessage(Player* const player, int message){
     QTcpSocket* send = static_cast<QTcpSocket*>(&player->getSocket());
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
@@ -216,7 +184,7 @@ void Widget::sendMessage(Player* const player, int message){
     qDebug()<<player->getPlayerName() + " out " + message + " succeed";
 }
 
-void Widget::sendMessage(Player* const player, QString message){
+void ServerBootstrap::sendMessage(Player* const player, QString message){
     QTcpSocket* send = static_cast<QTcpSocket*>(&player->getSocket());
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);

@@ -30,12 +30,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        widget.cpp \
-    player.cpp
+    player.cpp \
+    bootstrap.cpp \
+    server.cpp
 
 HEADERS += \
-        widget.h \
-    player.h
+    player.h \
+    bootstrap.h \
+    server.h
 
 FORMS += \
         widget.ui

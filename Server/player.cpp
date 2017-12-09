@@ -1,8 +1,10 @@
 #include "player.h"
+#include "bootstrap.h"
 
 Player::Player(QTcpSocket * socket, QObject *parent)
     : QObject(parent), _clientSocket(*socket)
 {
+    initConsumQueue();
 
 }
 
@@ -53,5 +55,13 @@ void Player::initTotalCard()
         this->_totalCardDeck.append(var14);
         this->_totalCardDeck.append(var15);
         this->_totalCardDeck.append(var16);
+    }
+}
+
+void Player::initConsumQueue()
+{
+    for(int i = 0; i < 10; i++)
+    {
+        this->_consumeForTurn.enqueue(3);
     }
 }

@@ -1,41 +1,36 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef BOOTSTRAP_H
+#define BOOTSTRAP_H
 //#pragma execution_character_set("utf-8")
 #include <QWidget>
 #include <QtNetwork>
 #include <QHash>
 #include <QQueue>
-#include <utility>
-#include "player.h"
+#include "server.h"
 
-//using std::pair;
-
-typedef std::pair<Player *, Player *> PlayerPair;
 
 namespace Ui {
 class Widget;
 }
 
-class Widget : public QWidget
+class ServerBootstrap : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Widget(QWidget *parent = 0);
-    ~Widget();
+    explicit ServerBootstrap(QWidget *parent = 0);
+    ~ServerBootstrap();
 
 private:
     Ui::Widget *ui;
     QTcpServer *_server;
     QHostAddress _localHost;
     QQueue<Player *> _playerQueue;
-    QHash<QTcpSocket *, PlayerPair> _matchedList;
+    QHash<Player *, Server *> _matchedList; //每一居存放两个键值对 eg：<p1,server>, <p2,server>
 
 private:
     void initServer();
     void initConnect();
     QHostAddress getHostConnectedIP() const;
     Player* getPlayerFromSocket(QTcpSocket const *) const;
-    Player* getEnemyFromSocket(QTcpSocket const *) const;
 
     void getClientInfo(QTcpSocket* const socket, QDataStream & stream);
 
@@ -51,6 +46,7 @@ private slots:
     void doRequest();
     void doMatch();
     void showError(QAbstractSocket::SocketError);
+    void doReset(Player*, Server*);
 };
 
-#endif // WIDGET_H
+#endif // BOOTSTRAP_H
