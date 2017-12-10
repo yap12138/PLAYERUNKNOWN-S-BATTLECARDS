@@ -1,5 +1,7 @@
 #include "player.h"
 #include "bootstrap.h"
+#include <QDebug>
+
 
 Player::Player(QTcpSocket * socket, QObject *parent)
     : QObject(parent), _clientSocket(*socket)
@@ -7,13 +9,16 @@ Player::Player(QTcpSocket * socket, QObject *parent)
     initConsumQueue();
 
 }
-
+//172.16.31.9
 void Player::initTotalCard()
 {
     //先将list里的卡牌清空
     if (!this->_totalCardDeck.isEmpty())
     {
         foreach (auto var, this->_totalCardDeck) {
+            this->_totalCardDeck.removeOne(var);
+            qDebug()<<var->getCategory();
+            qDebug()<<typeid(*var).name();
             delete var;
         }
     }
@@ -56,6 +61,13 @@ void Player::initTotalCard()
         this->_totalCardDeck.append(var15);
         this->_totalCardDeck.append(var16);
     }
+}
+
+int Player::getNextConsume()
+{
+    if (this->_consumeForTurn.size() <= 1)
+        this->_consumeForTurn.enqueue(5);
+    return this->_consumeForTurn.dequeue();
 }
 
 void Player::initConsumQueue()

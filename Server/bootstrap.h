@@ -34,8 +34,8 @@ private:
 
     void getClientInfo(QTcpSocket* const socket, QDataStream & stream);
 
-    void sendMessage( Player* const player, int message);
-    void sendMessage(Player * const player, QString message);
+    //void sendMessage( Player* const player, int message);
+    //void sendMessage(Player * const player, const QString & message);
 
 signals:
     void canMatch();

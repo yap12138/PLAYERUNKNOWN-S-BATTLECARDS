@@ -11,7 +11,7 @@ class Server : public QObject
     Q_OBJECT
 public:
     explicit Server(Player* p1, Player* p2, QObject *parent = nullptr);
-
+    ~Server();
     inline const PlayerPair & getPlayers() const { return this->_gamePair; }
 
 private:
@@ -22,7 +22,7 @@ private:
     void bindServer(QTcpSocket &);
     Player* getPlayerFromSocket(QTcpSocket const *, int) const;    //mode=0找自己，mode=1找对手
     void sendMessage(Player* const player, int message);
-    void sendMessage(Player * const player, QString message);
+    void sendMessage(Player * const player, const QString & message);
 
 signals:
     void resetPlayer(Player*, Server*);
@@ -31,6 +31,8 @@ public slots:
     void doDisconnect();
     void doRequest();
     void doError(QAbstractSocket::SocketError);
+
+    void
 };
 
 #endif // SERVER_H
