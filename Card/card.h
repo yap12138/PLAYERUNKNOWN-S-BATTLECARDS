@@ -30,8 +30,6 @@ public:
     inline QObject const * getTAG() const { return this->_Tag; }
     inline void setTAG(QObject& tag) { this->_Tag = &tag; }
 
-    inline void deleteSelf() { delete this; }
-
     Card &operator = (const Card &);   //重载赋值运算符
     CARDSHARED_EXPORT friend QDataStream &operator<<(QDataStream &, const Card &);
     CARDSHARED_EXPORT friend QDataStream &operator>>(QDataStream &, Card &);

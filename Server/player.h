@@ -2,7 +2,7 @@
 #define PLAYER_H
 #include <QObject>
 #include <QTcpSocket>
-#include <QList>
+#include <QHash>
 #include <QQueue>
 #include "carddeck.h"
 
@@ -22,7 +22,7 @@ public:
 private:
     QTcpSocket & _clientSocket; //和客户端的连接
     QString _playerName;        //玩家名字
-    QList<Card *> _totalCardDeck;   //玩家卡组
+    QHash<int, Card *> _totalCardDeck;   //玩家卡组
 
     QQueue<int> _consumeForTurn;    //每回合得费队列
 

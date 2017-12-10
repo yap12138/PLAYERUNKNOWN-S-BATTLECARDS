@@ -16,7 +16,7 @@ void Player::initTotalCard()
     if (!this->_totalCardDeck.isEmpty())
     {
         foreach (auto var, this->_totalCardDeck) {
-            this->_totalCardDeck.removeOne(var);
+            this->_totalCardDeck.remove(var->getId());
             qDebug()<<var->getCategory();
             qDebug()<<typeid(*var).name();
             delete var;
@@ -44,22 +44,22 @@ void Player::initTotalCard()
         Card * var15 = new Arms_InfinityEdge();
         Card * var16 = new Arms_Nokia();
 
-        this->_totalCardDeck.append(var1);
-        this->_totalCardDeck.append(var2);
-        this->_totalCardDeck.append(var3);
-        this->_totalCardDeck.append(var4);
-        this->_totalCardDeck.append(var5);
-        this->_totalCardDeck.append(var6);
-        this->_totalCardDeck.append(var7);
-        this->_totalCardDeck.append(var8);
-        this->_totalCardDeck.append(var9);
-        this->_totalCardDeck.append(var10);
-        this->_totalCardDeck.append(var11);
-        this->_totalCardDeck.append(var12);
-        this->_totalCardDeck.append(var13);
-        this->_totalCardDeck.append(var14);
-        this->_totalCardDeck.append(var15);
-        this->_totalCardDeck.append(var16);
+        this->_totalCardDeck.insert(var1->getId(), var1);
+        this->_totalCardDeck.insert(var2->getId(), var2);
+        this->_totalCardDeck.insert(var3->getId(), var3);
+        this->_totalCardDeck.insert(var4->getId(), var4);
+        this->_totalCardDeck.insert(var5->getId(), var5);
+        this->_totalCardDeck.insert(var6->getId(), var6);
+        this->_totalCardDeck.insert(var7->getId(), var7);
+        this->_totalCardDeck.insert(var8->getId(), var8);
+        this->_totalCardDeck.insert(var9->getId(), var9);
+        this->_totalCardDeck.insert(var10->getId(), var10);
+        this->_totalCardDeck.insert(var11->getId(), var11);
+        this->_totalCardDeck.insert(var12->getId(), var12);
+        this->_totalCardDeck.insert(var13->getId(), var13);
+        this->_totalCardDeck.insert(var14->getId(), var14);
+        this->_totalCardDeck.insert(var15->getId(), var15);
+        this->_totalCardDeck.insert(var16->getId(), var16);
     }
 }
 
@@ -73,7 +73,9 @@ int Player::getNextConsume()
 const Card *Player::getCardFromDeck()
 {
     int index = qrand()%this->_totalCardDeck.size();
-    Card * card = this->_totalCardDeck.takeAt(index);
+    QList<Card *> temp = this->_totalCardDeck.values();
+    Card * card = temp.takeAt(index);
+    this->_totalCardDeck.remove(card->getId());
     return card;
 }
 

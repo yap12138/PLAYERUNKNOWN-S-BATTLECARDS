@@ -62,7 +62,7 @@ void Server::sendMessage(Player * const player, int message)
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
     out << message;
-    qDebug()<<player->getPlayerName() + " out " + message + " succeed";
+    qDebug()<<player->getPlayerName() << " out " << message << " succeed";
 }
 
 void Server::sendMessage(Player * const player, const QString &message)
@@ -71,7 +71,7 @@ void Server::sendMessage(Player * const player, const QString &message)
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
     out << message;
-    qDebug()<<player->getPlayerName() + " out " + message + " succeed";
+    qDebug()<<player->getPlayerName() << " out " << message << " succeed";
 }
 
 void Server::sendMessage(Player * const player, const Card *card)
@@ -84,7 +84,7 @@ void Server::sendMessage(Player * const player, const Card *card)
 //        MagicCard
 //    }
     out<<(*card);
-    qDebug()<<player->getPlayerName() + " out card:" + card->getCategory() + " id:" + card->getId() + " succeed";
+    qDebug()<<player->getPlayerName() << " out card:"<< card->getCategory() << " id:" << card->getId() << " succeed";
 }
 //172.16.31.9
 
@@ -133,6 +133,7 @@ void Server::doError(QAbstractSocket::SocketError e)
  */
 void Server::doGameStart()
 {
+    qDebug()<<"do game start";
     //0表示1p先攻，1表示2p先攻
     int whoToFirst = qrand()%2;
     Player * p1 = this->_gamePair.first;
@@ -149,21 +150,20 @@ void Server::doGameStart()
     p1->getSocket().flush();
     p2->getSocket().flush();
 
-    if(whoToFirst == 0)
-    {
-        QTimer::singleShot(1000, this, SLOT(doTurnStart(p1)));
-    }
-    else
-    {
-        QTimer::singleShot(1000, this, SLOT(doTurnStart(p2)));
-    }
+    this->_nextTurn = whoToFirst;
+    QTimer::singleShot(1000, this, SLOT(doTurnStart()));
 }
 
-void Server::doTurnStart(Player * const player)
+void Server::doTurnStart()
 {
-    sendMessage(player, 2);
+    qDebug()<<this->_nextTurn;
+    Player * player = (this->_nextTurn == 0)? this->_gamePair.first : this->_gamePair.second;
+    qDebug()<<player->getSocket().peerPort();
+
+    sendMessage(player, 1);
     sendMessage(player, player->getNextConsume());
     sendMessage(player, player->getCardFromDeck());
+    player->getSocket().flush();
 }
 
 

@@ -18,6 +18,7 @@ private:
     static int _serialID;
     int _serverID;
     PlayerPair _gamePair;
+    int _nextTurn;
 
     void bindServer(QTcpSocket &);
     Player* getPlayerFromSocket(QTcpSocket const *, int) const;    //mode=0找自己，mode=1找对手
@@ -34,7 +35,7 @@ private slots:
     void doError(QAbstractSocket::SocketError);
 
     void doGameStart(); //开局
-    void doTurnStart(Player* const player); //回合开始
+    void doTurnStart(); //回合开始
 };
 
 #endif // SERVER_H
