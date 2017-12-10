@@ -11,17 +11,38 @@ class Player : public QObject
     Q_OBJECT
 public:
     explicit Player(QTcpSocket *socket, QObject *parent = nullptr);
-
+    ~Player(){
+        if (!this->_totalCardDeck.isEmpty())
+        {
+            foreach (auto var, this->_totalCardDeck) {
+                this->_totalCardDeck.remove(var->getId());
+                qDebug()<<var->getCategory();
+                qDebug()<<typeid(*var).name();
+                delete var;
+            }
+        }
+    }
     inline QTcpSocket & getSocket() const { return this->_clientSocket; }
     inline const QString & getPlayerName() const { return this->_playerName; }
     inline void setPlayerName(QString & name) { this->_playerName = name; }
+    inline Card* getCard(int cardId){ return this->_totalCardDeck.take(cardId); }
+    inline bool isMyCard(int cardId){ return this->_totalCardDeck.contains(cardId); }
+
 
     void initTotalCard();
     int getNextConsume();
     Card const * getCardFromDeck();
+    int getHP() const { return this->_HP ;}
+    inline void setHP(int HP){ this->_HP = HP ;}
+
+    int getConsume() const{ return this->_consume ;}
+    inline void setConsume(int consume){ this->_consume = consume ;}
+
 private:
     QTcpSocket & _clientSocket; //和客户端的连接
     QString _playerName;        //玩家名字
+    int _HP;
+    int _consume;
     QHash<int, Card *> _totalCardDeck;   //玩家卡组
 
     QQueue<int> _consumeForTurn;    //每回合得费队列

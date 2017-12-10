@@ -26,6 +26,9 @@ private:
     void sendMessage(Player * const player, const QString & message);
     void sendMessage(Player* const player, Card const * card);
 
+    void monsterAttack(Card *source, Card *target, Player* sourcePlayer, Player* targetPlayer);
+    void monsterAttack(Card *source, Player *target, Player* sourcePlayer, Player* targetPlayer);
+    void addArms(Card * sourceArms, Card *targetMonster, Player* sourcePlayer, Player* targetPlayer);
 signals:
     void resetPlayer(Player*, Server*);
 
@@ -36,6 +39,7 @@ private slots:
 
     void doGameStart(); //开局
     void doTurnStart(); //回合开始
+
 };
 
 #endif // SERVER_H
