@@ -1,5 +1,5 @@
 #include "server.h"
-#include <QMetaType>
+#include <QTimer>
 
 //qRegisterMetaType<Server>("Server");
 
@@ -21,6 +21,8 @@ Server::Server(Player *p1, Player *p2, QObject *parent)
     //初始化双方卡组
     p1->initTotalCard();
     p2->initTotalCard();
+
+    QTimer::singleShot(1000, this, SLOT(doGameStart()));
 }
 
 Server::~Server()
@@ -71,6 +73,19 @@ void Server::sendMessage(Player * const player, const QString &message)
     out << message;
     qDebug()<<player->getPlayerName() + " out " + message + " succeed";
 }
+
+void Server::sendMessage(Player * const player, const Card *card)
+{
+    QTcpSocket* send = &(player->getSocket());
+    QDataStream out(send);
+    out.setVersion(QDataStream::Qt_5_9);
+//    if (dynamic_cast<MagicCard*> (card))
+//    {
+//        MagicCard
+//    }
+    out<<(*card);
+    qDebug()<<player->getPlayerName() + " out card:" + card->getCategory() + " id:" + card->getId() + " succeed";
+}
 //172.16.31.9
 
 void Server::doDisconnect()
@@ -111,4 +126,44 @@ void Server::doError(QAbstractSocket::SocketError e)
 {
     qDebug()<< e;
 }
+
+/**
+ *  给双方发4张初始手牌，再确定一个先攻，再发牌发费
+ * @brief Server::doStartGame
+ */
+void Server::doGameStart()
+{
+    //0表示1p先攻，1表示2p先攻
+    int whoToFirst = qrand()%2;
+    Player * p1 = this->_gamePair.first;
+    Player * p2 = this->_gamePair.second;
+    //开局报头
+    sendMessage(p1, 6);
+    sendMessage(p2, 6);
+    //4张卡牌
+    for (int i = 0; i < 4; i++)
+    {
+        sendMessage(p1, p1->getCardFromDeck());
+        sendMessage(p2, p2->getCardFromDeck());
+    }
+    p1->getSocket().flush();
+    p2->getSocket().flush();
+
+    if(whoToFirst == 0)
+    {
+        QTimer::singleShot(1000, this, SLOT(doTurnStart(p1)));
+    }
+    else
+    {
+        QTimer::singleShot(1000, this, SLOT(doTurnStart(p2)));
+    }
+}
+
+void Server::doTurnStart(Player * const player)
+{
+    sendMessage(player, 2);
+    sendMessage(player, player->getNextConsume());
+    sendMessage(player, player->getCardFromDeck());
+}
+
 

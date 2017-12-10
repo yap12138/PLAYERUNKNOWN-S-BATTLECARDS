@@ -18,6 +18,7 @@ public:
 
     void initTotalCard();
     int getNextConsume();
+    Card const * getCardFromDeck();
 private:
     QTcpSocket & _clientSocket; //和客户端的连接
     QString _playerName;        //玩家名字

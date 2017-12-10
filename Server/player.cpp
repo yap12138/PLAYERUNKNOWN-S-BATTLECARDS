@@ -70,6 +70,13 @@ int Player::getNextConsume()
     return this->_consumeForTurn.dequeue();
 }
 
+const Card *Player::getCardFromDeck()
+{
+    int index = qrand()%this->_totalCardDeck.size();
+    Card * card = this->_totalCardDeck.takeAt(index);
+    return card;
+}
+
 void Player::initConsumQueue()
 {
     for(int i = 0; i < 10; i++)

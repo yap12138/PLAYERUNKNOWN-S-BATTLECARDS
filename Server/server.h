@@ -23,16 +23,18 @@ private:
     Player* getPlayerFromSocket(QTcpSocket const *, int) const;    //mode=0找自己，mode=1找对手
     void sendMessage(Player* const player, int message);
     void sendMessage(Player * const player, const QString & message);
+    void sendMessage(Player* const player, Card const * card);
 
 signals:
     void resetPlayer(Player*, Server*);
 
-public slots:
+private slots:
     void doDisconnect();
     void doRequest();
     void doError(QAbstractSocket::SocketError);
 
-    void
+    void doGameStart(); //开局
+    void doTurnStart(Player* const player); //回合开始
 };
 
 #endif // SERVER_H
