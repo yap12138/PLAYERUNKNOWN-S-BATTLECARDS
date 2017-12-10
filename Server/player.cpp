@@ -6,8 +6,9 @@
 Player::Player(QTcpSocket * socket, QObject *parent)
     : QObject(parent), _clientSocket(*socket)
 {
+    this->_HP = 30;
+    this->_consume = 0;
     initConsumQueue();
-
 }
 //172.16.31.9
 void Player::initTotalCard()

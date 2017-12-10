@@ -86,6 +86,75 @@ void Server::sendMessage(Player * const player, const Card *card)
     out<<(*card);
     qDebug()<<player->getPlayerName() << " out card:"<< card->getCategory() << " id:" << card->getId() << " succeed";
 }
+
+/**
+ * @brief Server::enemySendCard 告诉对面对手出了什么牌
+ * @param socket
+ * @param srcID
+ * @param desID
+ * @param card
+ */
+void Server::enemySendCard(const QTcpSocket * socket, int srcID, int desID, Card *card)
+{
+    Player * player = getPlayerFromSocket(socket, 1);
+    QTcpSocket* send = &(player->getSocket());
+    QDataStream out(send);
+    out.setVersion(QDataStream::Qt_5_9);
+    out<<card->getCategory()<<srcID<<desID;
+    send->flush();
+}
+
+void Server::dealSendMagic(const Player *p1, const Card *srcCard, int descID)
+{
+    //p1扣费
+    p1->setConsume(p1->getConsume() - srcMagic->getConsume());
+    Player* p2 = this->getPlayerFromSocket(&(p1->getSocket()), 1);
+    //使用魔法卡
+    MagicCard * srcMagic = dynamic_cast<MagicCard*>(srcCard);
+    switch (srcCard->getCategory()) {
+    case 22:    //王者吟唱
+        p2 = p1;
+    case 20:    //火球
+    case 23:    //风暴
+    {
+        Card *card = p2->getCard(descID);
+        MonsterCard *descCard = dynamic_cast<MonsterCard*> (card);
+        descCard->setAttack(descCard->getAttack() + srcMagic->getSkillBuff());
+        //给双方发送改变怪状态报文
+        sendMessage(p1, 5);
+        sendMessage(p1, descID);
+        sendMessage(p1, descCard->getAttack());
+        p1->getSocket().flush();
+
+        sendMessage(p2, 5);
+        sendMessage(p2, descID);
+        sendMessage(p2, descCard->getAttack());
+        p2->getSocket().flush();
+        break;
+    }
+    case 24:    //老师
+        p1->_consumeForTurn.replace(0,0);
+    case 21:    //苏醒+2费
+    {
+        p1->setConsume(p1->getConsume() + srcMagic->getSkillBuff());
+        //给1p客户端发费
+        sendMessage(p1, 2);
+        sendMessage(p1, 0);
+        sendMessage(p1, p1->getHP());
+        sendMessage(p1, p1->getConsume());
+        break;
+    }
+    default:
+        qDebug()<<"dealSendMagic error";
+        break;
+    }
+    //告诉p2，p1扣费了
+    sendMessage(p2, 2);
+    sendMessage(p2, 1);
+    sendMessage(p2, p1->getHP());
+    sendMessage(p2, p1->getConsume());
+}
+
 //172.16.31.9
 
 void Server::doDisconnect()
@@ -115,9 +184,30 @@ void Server::doRequest()
     int msgCategory;
     in>>msgCategory;
     switch (msgCategory) {
-    case 0:
-        break;
+    case 1:
+    {
+        int sourceID, targetID;
+        in >> sourceID;
+        in >> targetID;
+        Player* sourcePlayer = this->getPlayerFromSocket(rev, 0);
+        Player* targetPlayer = this->getPlayerFromSocket(rev, 1);
+        Card* sourceCard = sourcePlayer->getCard(sourceID);
+
+        this->enemySendCard(rev, sourceID, targetID, sourceCard);   //告诉对方出牌了
+
+//        if (sourcePlayer->isMyCard(targetID))
+//            targetPlayer = sourcePlayer;
+//        Card* targetCard = targetPlayer->getCard(targetID);
+
+        if (sourceCard->getCategory() < 20) {
+
+        }
+        else if (sourceCard->getCategory() < 30) {
+
+        }
+    }
     default:
+        qDebug<<"error code: "<<msgCategory;
         break;
     }
 }
@@ -158,7 +248,7 @@ void Server::doTurnStart()
 {
     qDebug()<<this->_nextTurn;
     Player * player = (this->_nextTurn == 0)? this->_gamePair.first : this->_gamePair.second;
-    qDebug()<<player->getSocket().peerPort();
+    this->_nextTurn = this->_nextTurn^1;
 
     sendMessage(player, 1);
     sendMessage(player, player->getNextConsume());

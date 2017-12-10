@@ -26,6 +26,9 @@ private:
     void sendMessage(Player * const player, const QString & message);
     void sendMessage(Player* const player, Card const * card);
 
+    void enemySendCard(QTcpSocket const *, int, int, Card*);
+    void dealSendMagic(Player const * p1, Card const * srcCard, int descID);
+
 signals:
     void resetPlayer(Player*, Server*);
 
@@ -36,6 +39,7 @@ private slots:
 
     void doGameStart(); //开局
     void doTurnStart(); //回合开始
+
 };
 
 #endif // SERVER_H
