@@ -28,7 +28,7 @@ private:
 
 
     void enemySendCard(QTcpSocket const *, int, int, Card*);
-    void dealSendMagic(Player const * p1, Card const * srcCard, int descID);
+    void dealSendMagic(Player *p1, Card *srcCard, int descID);
 
     void monsterAttack(Card *source, Card *target, Player* sourcePlayer, Player* targetPlayer);
     void monsterAttack(Card *source, Player *target, Player* sourcePlayer, Player* targetPlayer);
