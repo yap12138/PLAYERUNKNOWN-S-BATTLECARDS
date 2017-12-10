@@ -26,8 +26,13 @@ private:
     void sendMessage(Player * const player, const QString & message);
     void sendMessage(Player* const player, Card const * card);
 
+
     void enemySendCard(QTcpSocket const *, int, int, Card*);
     void dealSendMagic(Player const * p1, Card const * srcCard, int descID);
+
+    void monsterAttack(Card *source, Card *target, Player* sourcePlayer, Player* targetPlayer);
+    void monsterAttack(Card *source, Player *target, Player* sourcePlayer, Player* targetPlayer);
+    void addArms(Card * sourceArms, Card *targetMonster, Player* sourcePlayer, Player* targetPlayer);
 
 signals:
     void resetPlayer(Player*, Server*);

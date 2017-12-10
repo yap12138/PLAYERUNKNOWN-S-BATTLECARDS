@@ -142,6 +142,7 @@ void Server::dealSendMagic(const Player *p1, const Card *srcCard, int descID)
         sendMessage(p1, 0);
         sendMessage(p1, p1->getHP());
         sendMessage(p1, p1->getConsume());
+		aa
         break;
     }
     default:
@@ -153,6 +154,7 @@ void Server::dealSendMagic(const Player *p1, const Card *srcCard, int descID)
     sendMessage(p2, 1);
     sendMessage(p2, p1->getHP());
     sendMessage(p2, p1->getConsume());
+	aa
 }
 
 //172.16.31.9
@@ -184,32 +186,156 @@ void Server::doRequest()
     int msgCategory;
     in>>msgCategory;
     switch (msgCategory) {
+    case 0:
+        break;
     case 1:
-    {
-        int sourceID, targetID;
-        in >> sourceID;
-        in >> targetID;
-        Player* sourcePlayer = this->getPlayerFromSocket(rev, 0);
-        Player* targetPlayer = this->getPlayerFromSocket(rev, 1);
-        Card* sourceCard = sourcePlayer->getCard(sourceID);
+        {
+            int sourceID, targetID;
+            in >> sourceID;
+            in >> targetID;
+            Player* sourcePlayer = this->getPlayerFromSocket(rev, 0);
+            Player* targetPlayer = this->getPlayerFromSocket(rev, 1);
+            Card* sourceCard = sourcePlayer->getCard(sourceID);
+			//this->enemySendCard(rev, sourceID, targetID, sourceCard);   //告诉对方出牌了
+            if (sourcePlayer->isMyCard(targetID)) targetPlayer = sourcePlayer;  //判断是否对自己的怪物使用卡牌, 是则从自己卡组寻找卡牌
+            if (targetID == -2) {
 
-        this->enemySendCard(rev, sourceID, targetID, sourceCard);   //告诉对方出牌了
+                //怪物上场，减少使用者法力值
+                sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());
 
-//        if (sourcePlayer->isMyCard(targetID))
-//            targetPlayer = sourcePlayer;
-//        Card* targetCard = targetPlayer->getCard(targetID);
+                //告诉对手自己所上场的怪物
+                sendMessage(targetPlayer, 3);
+                sendMessage(targetPlayer, sourceCard->getCategory());
+                sendMessage(targetPlayer, sourceCard->getId());
+                sendMessage(targetPlayer, -2);
+                targetPlayer->getSocket().flush();
 
-        if (sourceCard->getCategory() < 20) {
+                //告诉对手更新自己的血和法力值信息
+                sendMessage(targetPlayer, 2);
+                sendMessage(targetPlayer, 1);
+                sendMessage(targetPlayer, sourcePlayer->getHP());
+                sendMessage(targetPlayer, sourcePlayer->getConsume());
+                targetPlayer->getSocket().flush();
 
+                break;
+            }
+            Card* targetCard = targetPlayer->getCard(targetID);
+
+            //出牌信息转发
+            sendMessage(targetPlayer, 3);
+            sendMessage(targetPlayer, sourceCard->getCategory());
+            sendMessage(targetPlayer, sourceCard->getId());
+            sendMessage(targetPlayer, targetCard->getId());
+            targetPlayer->getSocket().flush();
+
+            if (targetID == -1){
+                monsterAttack(sourceCard, targetPlayer, sourcePlayer, targetPlayer); //怪物对人
+            }
+            else if (sourceID < 20){
+                monsterAttack(sourceCard, targetCard, sourcePlayer, targetPlayer); //怪物对怪物
+            }
+            else if (sourceID < 30){
+                //TODO 魔法对怪
+				dealSendMagic(const Player *p1, const Card *srcCard, int descID)
+            }
+            else if (sourceID < 40){
+                sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());    //出装备卡扣费
+
+                //告诉对手更新自己的信息
+                sendMessage(targetPlayer, 2);
+                sendMessage(targetPlayer, 1);
+                sendMessage(targetPlayer, sourcePlayer->getHP());
+                sendMessage(targetPlayer, sourcePlayer->getConsume());
+                targetPlayer->getSocket().flush();
+
+                addArms(sourceCard, targetCard, sourcePlayer, targetPlayer);    //怪物装备武器
+            }
+            break;
         }
-        else if (sourceCard->getCategory() < 30) {
-
-        }
-    }
     default:
         qDebug<<"error code: "<<msgCategory;
         break;
     }
+}
+
+//怪物对怪物攻击
+void Server::monsterAttack(Card* source, Card* target, Player* sourcePlayer, Player* targetPlayer){
+    MonsterCard* tempS = dynamic_cast<MonsterCard* >(source);
+    MonsterCard* tempT = dynamic_cast<MonsterCard* >(target);
+    bool SHaveArms = (tempS->getArms() != nullptr);
+    bool THaveArms = (tempT->getArms() != nullptr);
+    *tempS - *tempT;
+
+    if (SHaveArms){
+        sendMessage(sourcePlayer, 4);
+        sendMessage(sourcePlayer, source->getId());
+        sendMessage(sourcePlayer, tempS->getArms()->getAttackBuf());
+    }
+    else {
+        sendMessage(sourcePlayer, 5);
+        sendMessage(sourcePlayer, source->getId());
+        sendMessage(sourcePlayer, tempS->getAttack());
+    }
+    sourcePlayer->getSocket().flush();
+
+    if (THaveArms){
+        sendMessage(targetPlayer, 4);
+        sendMessage(targetPlayer, source->getId());
+        sendMessage(targetPlayer, tempT->getArms()->getAttackBuf());
+    }
+    else {
+        sendMessage(targetPlayer, 5);
+        sendMessage(targetPlayer, source->getId());
+        sendMessage(targetPlayer, tempT->getAttack());
+    }
+    targerPlayer->getSocket().flush();
+}
+
+//怪物对人攻击
+void Server::monsterAttack(Card* source, Player* target, Player* sourcePlayer, Player* targetPlayer){
+    target->setHP(target->getHP() - dynamic_cast<MonsterCard* >(source)->getAttack());
+    sendMessage(sourcePlayer, 2);
+    sendMessage(sourcePlayer, 1);
+    sendMessage(sourcePlayer, targetPlayer->getHP());
+    sendMessage(sourcePlayer, targetPlayer->getConsume());
+    sourcePlayer->getSocket().flush();
+
+    sendMessage(targetPlayer, 2);
+    sendMessage(targetPlayer, 0);
+    sendMessage(targetPlayer, targetPlayer->getHP());
+    sendMessage(targetPlayer, targetPlayer->getConsume());
+    targerPlayer->getSocket().flush();
+
+	//TODO 游戏结束
+    if (targetPlayer->getHP() <= 0)
+    {
+        sendMessage(sourcePlayer, 10);
+        sendMessage(sourcePlayer, 1);
+        sourcePlayer->getSocket().flush();
+
+        sendMessage(targetPlayer, 10);
+        sendMessage(targetPlayer, 0);
+        targetPlayer->getSocket().flush();
+
+        delete sourcePlayer();
+        delete targetPlayer();
+        delete this;
+    }
+}
+
+//怪物装备武器
+void Server::addArms(Card *sourceArms, Card *targetMonster, Player *sourcePlayer, Player *targetPlayer)
+{
+    dynamic_cast<MonsterCard*>(targetMonster) + dynamic_cast<ArmsCard*>(sourceArms);
+    sendMessage(sourcePlayer, 4);
+    sendMessage(sourcePlayer, sourceArms->getId());
+    sendMessage(sourcePlayer, tempS->getArms()->getAttackBuf());
+    sourcePlayer->getSocket().flush();
+
+    sendMessage(targetPlayer, 4);
+    sendMessage(targetPlayer, sourceArms->getId());
+    sendMessage(targetPlayer, tempS->getArms()->getAttackBuf());
+    targerPlayer->getSocket().flush();
 }
 
 void Server::doError(QAbstractSocket::SocketError e)
