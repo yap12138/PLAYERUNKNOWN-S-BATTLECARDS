@@ -5,25 +5,25 @@ int Card::_count = 0;
 Card::Card()
 {
     this->_id = _count++;
-    //this->_category = -1;
     this->_name = new QString();
     this->_description = new QString();
-    this->_consume = 0;
 }
 
 Card::Card(QString &name, QString &description, const int consume)
 {
     this->_id = _count++;
-    //this->_category = category;
-    this->_name = &name;
-    this->_description = &description;
+    this->_name = new QString();
+    this->_description = new QString();
+    *this->_name = name;
+    *this->_description = description;
     this->_consume = consume;
 }
 
 Card::Card(const Card & other)
 {
     this->_id = _count++;
-    //this->_category = other._category;
+    this->_name = new QString();
+    this->_description = new QString();
     this->_name = other._name;
     this->_description = other._description;
     this->_consume = other._consume;
@@ -31,10 +31,6 @@ Card::Card(const Card & other)
 
 Card::~Card()
 {
-    delete _name;
-    delete _description;
-    if (this->_Tag != nullptr)
-        delete _Tag;
 }
 
 int Card::skill()

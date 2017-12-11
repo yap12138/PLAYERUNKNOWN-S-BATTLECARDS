@@ -2,6 +2,7 @@
 #include "ui_widget.h"
 #include <QThread>
 
+
 ServerBootstrap::ServerBootstrap(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
@@ -80,6 +81,7 @@ void ServerBootstrap::getClientInfo(QTcpSocket * const socket, QDataStream &stre
     QString name;
     stream>>name;
     qDebug()<<name;
+    this->ui->textBrowser->append(name);
     Player * var = getPlayerFromSocket(socket);
     var->setPlayerName(name);
 
@@ -90,7 +92,8 @@ void ServerBootstrap::getClientInfo(QTcpSocket * const socket, QDataStream &stre
 void ServerBootstrap::acceptConnection()
 {
     QTcpSocket* clientConnection = _server->nextPendingConnection();
-    qDebug()<<"new connect"<<clientConnection->localAddress().toString();
+    qDebug()<<"new connect"<<clientConnection->peerAddress().toString()<<" : "<<clientConnection->peerPort();
+    this->ui->textBrowser->append("new connect"+clientConnection->peerAddress().toString()+" : "+QString::number(clientConnection->peerPort()));
     connect(clientConnection, SIGNAL(disconnected()), this, SLOT(onDisConnect()));
     connect(clientConnection, SIGNAL(readyRead()), this, SLOT(doRequest()));
     connect(clientConnection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(showError(QAbstractSocket::SocketError)));
@@ -99,24 +102,12 @@ void ServerBootstrap::acceptConnection()
     this->_playerQueue.enqueue(player);
 
     qDebug()<<"queue new size:"<<this->_playerQueue.size();
+    this->ui->textBrowser->append("queue new size: "+QString::number(this->_playerQueue.size()));
 }
 
 void ServerBootstrap::onDisConnect()
 {
     QTcpSocket* disSocket = qobject_cast<QTcpSocket*> (sender());
-
-//    QProcess* cmd = new QProcess;
-//    qDebug() << disSocket->peerAddress().toString();
-//    QString strArg = "ping " + disSocket->peerAddress().toString() + " -n 1 -w " + QString::number(10000) ;
-//    cmd->start(strArg);
-//    cmd->waitForStarted();
-//    cmd->waitForFinished();
-//    qDebug() << QString::fromLocal8Bit(cmd->readAll());
-//    QString retStr = cmd->readAll();
-//    if (retStr.toStdString().find(aa) != -1)
-//    {
-//        qDebug() << "is online!\n";
-//    }
 
     Player * tPlayer = getPlayerFromSocket( disSocket );
     this->_playerQueue.removeOne(tPlayer);
@@ -147,47 +138,58 @@ void ServerBootstrap::doMatch()
     Player* p1 = this->_playerQueue.dequeue();
     Player* p2 = this->_playerQueue.dequeue();
     //转移给服务线程处理
-    p1->getSocket().disconnect(this);
-    p2->getSocket().disconnect(this);
+    /*p1->getSocket().disconnect(this);
+    p2->getSocket().disconnect(this);*/
+    disconnect(&(p1->getSocket()), SIGNAL(disconnected()), this, SLOT(onDisConnect()));
+    disconnect(&(p1->getSocket()), SIGNAL(readyRead()), this, SLOT(doRequest()));
+    disconnect(&(p1->getSocket()), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(showError(QAbstractSocket::SocketError)));
+    disconnect(&(p2->getSocket()), SIGNAL(disconnected()), this, SLOT(onDisConnect()));
+    disconnect(&(p2->getSocket()), SIGNAL(readyRead()), this, SLOT(doRequest()));
+    disconnect(&(p2->getSocket()), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(showError(QAbstractSocket::SocketError)));
 
     Server* server = new Server(p1, p2);
-    QThread * serverThread = new QThread(server);
-    server->moveToThread(serverThread);
+    //QThread * serverThread = new QThread(server);
+    //server->moveToThread(serverThread);
 
     connect(server, SIGNAL(resetPlayer(Player*,Server*)), this, SLOT(doReset(Player*,Server*)));
+    connect(server, SIGNAL(gameOver(Server*)), this, SLOT(doGameover(Server*)));
     //保存对局信息
     this->_matchedList.insert(p1, server);
     this->_matchedList.insert(p2, server);
 
     qDebug()<<"match succeed\n"<<"have "<<this->_matchedList.size()/2<<" match pair";
+    this->ui->textBrowser->append("match succeed\nhave "+QString::number(this->_matchedList.size()/2)+" match pair");
 }
 
 void ServerBootstrap::showError(QAbstractSocket::SocketError e)
 {
     qDebug()<< e;
+    QTcpSocket * socket = static_cast<QTcpSocket*> (sender());
+    this->ui->textBrowser->append(socket->peerAddress().toString() + " : " + QString::number(socket->peerPort()) + " error");
 }
 
 void ServerBootstrap::doReset(Player * player, Server * server)
 {
     qDebug()<<"remove "<<player->getPlayerName()<<" to queue";
     this->_playerQueue.enqueue(player);        //将对手放回就绪匹配队列
+    connect(&(player->getSocket()), SIGNAL(disconnected()), this, SLOT(onDisConnect()));
+    connect(&(player->getSocket()), SIGNAL(readyRead()), this, SLOT(doRequest()));
+    connect(&(player->getSocket()), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(showError(QAbstractSocket::SocketError)));
     this->_matchedList.remove(server->getPlayers().first);
     this->_matchedList.remove(server->getPlayers().second);
     server->deleteLater();
 }
 
-void ServerBootstrap::sendMessage(Player* const player, int message){
-    QTcpSocket* send = static_cast<QTcpSocket*>(&player->getSocket());
-    QDataStream out(send);
-    out.setVersion(QDataStream::Qt_5_9);
-    out << message;
-    qDebug()<<player->getPlayerName() + " out " + message + " succeed";
-}
-
-void ServerBootstrap::sendMessage(Player* const player, QString message){
-    QTcpSocket* send = static_cast<QTcpSocket*>(&player->getSocket());
-    QDataStream out(send);
-    out.setVersion(QDataStream::Qt_5_9);
-    out << message;
-    qDebug()<<player->getPlayerName() + " out " + message + " succeed";
+void ServerBootstrap::doGameover(Server * server)
+{
+    qDebug()<<"game over";
+    this->ui->textBrowser->append("game over\n");
+    this->_matchedList.remove(server->getPlayers().first);
+    this->_matchedList.remove(server->getPlayers().second);
+    server->getPlayers().first->getSocket().disconnectFromHost();
+    server->getPlayers().second->getSocket().disconnectFromHost();
+    //回收内存
+    server->getPlayers().first->deleteLater();
+    server->getPlayers().second->deleteLater();
+    server->deleteLater();
 }

@@ -33,10 +33,6 @@ private:
     Player* getPlayerFromSocket(QTcpSocket const *) const;
 
     void getClientInfo(QTcpSocket* const socket, QDataStream & stream);
-
-    void sendMessage( Player* const player, int message);
-    void sendMessage(Player * const player, QString message);
-
 signals:
     void canMatch();
 
@@ -47,6 +43,7 @@ private slots:
     void doMatch();
     void showError(QAbstractSocket::SocketError);
     void doReset(Player*, Server*);
+    void doGameover(Server*);
 };
 
 #endif // BOOTSTRAP_H

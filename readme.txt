@@ -1,1 +1,1 @@
-aaaa
+exe目录需要放Card.dll

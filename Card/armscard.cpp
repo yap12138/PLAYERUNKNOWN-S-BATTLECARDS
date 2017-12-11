@@ -5,12 +5,14 @@ ArmsCard::ArmsCard()
     : Card()
 {
     this->_attackBuff = 0;
+    this->_owner = nullptr;
 }
 
 ArmsCard::ArmsCard(QString &name, QString &description, const int consume, int attackBuff)
     : Card(name, description, consume)
 {
     this->_attackBuff = attackBuff;
+    this->_owner = nullptr;
 }
 
 ArmsCard::ArmsCard(const ArmsCard & other)

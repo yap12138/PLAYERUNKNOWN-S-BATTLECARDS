@@ -23,11 +23,11 @@ public:
     virtual int getCategory() const;
 
     inline int getId() const { return this->_id; }
-    inline QString& getName() const { return *this->_name; }
-    inline QString& getDescription() const { return *this->_description; }
+    inline const QString& getName() const { return *this->_name; }
+    inline const QString& getDescription() const { return *this->_description; }
     inline int getConsume() const { return this->_consume; }
     inline void setConsume(int newConsume) { this->_consume = newConsume; }
-    inline const QObject* getTAG() const { return this->_Tag; }
+    inline QObject const * getTAG() const { return this->_Tag; }
     inline void setTAG(QObject& tag) { this->_Tag = &tag; }
 
     Card &operator = (const Card &);   //重载赋值运算符
