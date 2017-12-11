@@ -36,6 +36,7 @@ private:
 
 signals:
     void resetPlayer(Player*, Server*);
+    void gameOver(Server*);
 
 private slots:
     void doDisconnect();

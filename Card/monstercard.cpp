@@ -5,6 +5,7 @@ MonsterCard::MonsterCard()
 {
     this->_attack = 0;
     this->_hasSkill = false;
+    this->_arms = nullptr;
 }
 
 MonsterCard::MonsterCard(QString &name, QString &description, const int consume, int attack, bool hasSkill)
@@ -12,6 +13,7 @@ MonsterCard::MonsterCard(QString &name, QString &description, const int consume,
 {
     this->_attack = attack;
     this->_hasSkill = hasSkill;
+    this->_arms = nullptr;
 }
 
 MonsterCard::MonsterCard(const MonsterCard & other)
@@ -19,6 +21,7 @@ MonsterCard::MonsterCard(const MonsterCard & other)
 {
     this->_attack = other._attack;
     this->_hasSkill = other._hasSkill;
+    this->_arms = nullptr;
 }
 
 int MonsterCard::skill()
@@ -44,6 +47,7 @@ MonsterCard &MonsterCard::operator =(const MonsterCard & other)
     Card::operator =(other);
     this->_attack = other._attack;
     this->_hasSkill = other._hasSkill;
+    this->_arms = nullptr;
     return *this;
 }
 

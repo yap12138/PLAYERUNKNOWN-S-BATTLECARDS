@@ -235,7 +235,7 @@ void Server::doRequest()
                 monsterAttack(sourceCard, targetCard, sourcePlayer, targetPlayer); //怪物对怪物
             }
             else if (sourceID < 30){
-                //TODO 魔法对怪
+                //魔法对怪
                 dealSendMagic(sourcePlayer, sourceCard, targetID);
             }
             else if (sourceID < 40){
@@ -252,6 +252,8 @@ void Server::doRequest()
             }
             break;
         }
+    case 2:
+        doTurnStart();
     default:
         qDebug()<<"error code: "<<msgCategory;
         break;
@@ -306,7 +308,7 @@ void Server::monsterAttack(Card* source, Player* target, Player* sourcePlayer, P
     sendMessage(targetPlayer, targetPlayer->getConsume());
     targetPlayer->getSocket().flush();
 
-	//TODO 游戏结束
+    //游戏结束
     if (targetPlayer->getHP() <= 0)
     {
         sendMessage(sourcePlayer, 10);
@@ -317,9 +319,7 @@ void Server::monsterAttack(Card* source, Player* target, Player* sourcePlayer, P
         sendMessage(targetPlayer, 0);
         targetPlayer->getSocket().flush();
 
-//        delete sourcePlayer();
-//        delete targetPlayer();
-//        delete this;
+        emit gameOver(this);
     }
 }
 

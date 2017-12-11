@@ -18,8 +18,6 @@ public:
         {
             foreach (auto var, this->_totalCardDeck) {
                 this->_totalCardDeck.remove(var->getId());
-                qDebug()<<var->getCategory();
-                qDebug()<<typeid(*var).name();
                 delete var;
             }
         }
@@ -45,8 +43,6 @@ private:
     int _HP;
     int _consume;
     QHash<int, Card *> _totalCardDeck;   //玩家卡组
-
-
 
     void initConsumQueue(); //初始化每回合得费队列
 signals:
