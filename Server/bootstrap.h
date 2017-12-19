@@ -5,6 +5,7 @@
 #include <QtNetwork>
 #include <QHash>
 #include <QQueue>
+#include <QStandardItem>
 #include "server.h"
 
 
@@ -21,6 +22,8 @@ public:
 
 private:
     Ui::Widget *ui;
+    QStandardItemModel *_model;
+
     QTcpServer *_server;
     QHostAddress _localHost;
     QQueue<Player *> _playerQueue;

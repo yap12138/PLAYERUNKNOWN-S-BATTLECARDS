@@ -8,6 +8,17 @@ ServerBootstrap::ServerBootstrap(QWidget *parent) :
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    this->_model = new QStandardItemModel();
+    this->_model->setColumnCount(3);
+    this->_model->setHeaderData(0,Qt::Horizontal,QStringLiteral("玩家"));
+    this->_model->setHeaderData(1,Qt::Horizontal,QStringLiteral("卡牌ID"));
+    this->_model->setHeaderData(2,Qt::Horizontal,QStringLiteral("卡牌名字"));
+    ui->tableView->setModel(this->_model);
+
+    ui->tableView->setColumnWidth(0,168);
+    ui->tableView->setColumnWidth(1,80);
+    ui->tableView->setColumnWidth(2,160);
+
     initServer();
     initConnect();
 }
@@ -15,6 +26,8 @@ ServerBootstrap::ServerBootstrap(QWidget *parent) :
 ServerBootstrap::~ServerBootstrap()
 {
     delete ui;
+    delete _model;
+
     delete _server;
 }
 
@@ -147,7 +160,7 @@ void ServerBootstrap::doMatch()
     disconnect(&(p2->getSocket()), SIGNAL(readyRead()), this, SLOT(doRequest()));
     disconnect(&(p2->getSocket()), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(showError(QAbstractSocket::SocketError)));
 
-    Server* server = new Server(p1, p2);
+    Server* server = new Server(p1, p2, this->_model);
     //QThread * serverThread = new QThread(server);
     //server->moveToThread(serverThread);
 

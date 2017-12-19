@@ -23,6 +23,8 @@ public:
     inline int getAttack() const { return this->_attack; }
     inline void setAttack(int newAttack) { this->_attack = newAttack; }
     inline bool hasSkill() const { return this->_hasSkill; }
+    inline bool hasAttack() const { return this->_hasAttack; }
+    inline void setHasAttack(bool param) { this->_hasAttack = param; }
     inline const ArmsCard * getArms() const { return this->_arms; }
     inline void setArms(ArmsCard & arms) { this->_arms = &arms; }
 
@@ -37,6 +39,7 @@ protected:
 
     int _attack;        //攻击值
     bool _hasSkill;     //含有技能？默认为false
+    bool _hasAttack;    //当前回合是否攻击了
     ArmsCard* _arms;    //持有的装备
 };
 

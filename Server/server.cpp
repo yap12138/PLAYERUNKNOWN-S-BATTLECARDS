@@ -5,10 +5,11 @@
 
 int Server::_serialID = 0;
 
-Server::Server(Player *p1, Player *p2, QObject *parent)
+Server::Server(Player *p1, Player *p2, QStandardItemModel *model, QObject *parent)
     : QObject(parent), _gamePair(p1,p2)
 {
     this->_serverID = ++Server::_serialID;
+    this->_model = model;
     bindServer(p1->getSocket());
     bindServer(p2->getSocket());
     //给双方发送匹配成功
@@ -19,8 +20,8 @@ Server::Server(Player *p1, Player *p2, QObject *parent)
     sendMessage(p2, p1->getPlayerName());
     p2->getSocket().flush();
     //初始化双方卡组
-    p1->initTotalCard();
-    p2->initTotalCard();
+    p1->initTotalCard(this->_model);
+    p2->initTotalCard(this->_model);
 
     QTimer::singleShot(1000, this, SLOT(doGameStart()));
 }
@@ -71,7 +72,7 @@ void Server::sendMessage(Player * const player, const QString &message)
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
     out << message;
-    qDebug()<<player->getPlayerName() << " out " << message << " succeed";
+    //qDebug()<<player->getPlayerName() << " out " << message << " succeed";
 }
 
 void Server::sendMessage(Player * const player, const Card *card)
@@ -84,7 +85,7 @@ void Server::sendMessage(Player * const player, const Card *card)
 //        MagicCard
 //    }
     out<<(*card);
-    qDebug()<<player->getPlayerName() << " out card:"<< card->getCategory() << " id:" << card->getId() << " succeed";
+    qDebug()<<player->getPlayerName() << " out card:"<< card->getName() << " id:" << card->getId();
 }
 
 /**
@@ -100,7 +101,7 @@ void Server::enemySendCard(const QTcpSocket * socket, int srcID, int desID, Card
     QTcpSocket* send = &(player->getSocket());
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
-    out<<card->getCategory()<<srcID<<desID;
+    out<<3<<card->getCategory()<<srcID<<desID;
     send->flush();
 }
 
@@ -190,13 +191,17 @@ void Server::doRequest()
         break;
     case 1:
         {
+
             int sourceID, targetID;
             in >> sourceID;
             in >> targetID;
+            qDebug()<<"source: "<<sourceID<<" target: "<<targetID;
             Player* sourcePlayer = this->getPlayerFromSocket(rev, 0);
             Player* targetPlayer = this->getPlayerFromSocket(rev, 1);
+
             Card* sourceCard = sourcePlayer->getCard(sourceID);
-			//this->enemySendCard(rev, sourceID, targetID, sourceCard);   //告诉对方出牌了
+            this->enemySendCard(rev, sourceID, targetID, sourceCard);   //告诉对方出牌了
+
             if (sourcePlayer->isMyCard(targetID)) targetPlayer = sourcePlayer;  //判断是否对自己的怪物使用卡牌, 是则从自己卡组寻找卡牌
             if (targetID == -2) {
 
@@ -204,11 +209,11 @@ void Server::doRequest()
                 sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());
 
                 //告诉对手自己所上场的怪物
-                sendMessage(targetPlayer, 3);
-                sendMessage(targetPlayer, sourceCard->getCategory());
-                sendMessage(targetPlayer, sourceCard->getId());
-                sendMessage(targetPlayer, -2);
-                targetPlayer->getSocket().flush();
+//                sendMessage(targetPlayer, 3);
+//                sendMessage(targetPlayer, sourceCard->getCategory());
+//                sendMessage(targetPlayer, sourceCard->getId());
+//                sendMessage(targetPlayer, -2);
+//                targetPlayer->getSocket().flush();
 
                 //告诉对手更新自己的血和法力值信息
                 sendMessage(targetPlayer, 2);
@@ -219,26 +224,32 @@ void Server::doRequest()
 
                 break;
             }
-            Card* targetCard = targetPlayer->getCard(targetID);
+
 
             //出牌信息转发
-            sendMessage(targetPlayer, 3);
-            sendMessage(targetPlayer, sourceCard->getCategory());
-            sendMessage(targetPlayer, sourceCard->getId());
-            sendMessage(targetPlayer, targetCard->getId());
-            targetPlayer->getSocket().flush();
+//            sendMessage(targetPlayer, 3);
+//            sendMessage(targetPlayer, sourceCard->getCategory());
+//            sendMessage(targetPlayer, sourceCard->getId());
+//            sendMessage(targetPlayer, targetCard->getId());
+//            targetPlayer->getSocket().flush();
 
             if (targetID == -1){
+                qDebug()<<"attack people";
                 monsterAttack(sourceCard, targetPlayer, sourcePlayer, targetPlayer); //怪物对人
             }
-            else if (sourceID < 20){
+            else if (sourceCard->getCategory() < 20){
+                qDebug()<<"attack monster";
+                Card* targetCard = targetPlayer->getCard(targetID);
+                qDebug()<<targetCard->getName();
                 monsterAttack(sourceCard, targetCard, sourcePlayer, targetPlayer); //怪物对怪物
             }
-            else if (sourceID < 30){
+            else if (sourceCard->getCategory() < 30){
                 //魔法对怪
                 dealSendMagic(sourcePlayer, sourceCard, targetID);
             }
-            else if (sourceID < 40){
+            else if (sourceCard->getCategory() < 40){
+                Card* targetCard = targetPlayer->getCard(targetID);
+
                 sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());    //出装备卡扣费
 
                 //告诉对手更新自己的信息
@@ -254,6 +265,7 @@ void Server::doRequest()
         }
     case 2:
         doTurnStart();
+        break;
     default:
         qDebug()<<"error code: "<<msgCategory;
         break;
@@ -262,35 +274,71 @@ void Server::doRequest()
 
 //怪物对怪物攻击
 void Server::monsterAttack(Card* source, Card* target, Player* sourcePlayer, Player* targetPlayer){
-    MonsterCard* tempS = dynamic_cast<MonsterCard* >(source);
-    MonsterCard* tempT = dynamic_cast<MonsterCard* >(target);
+    MonsterCard* tempS = nullptr;
+    MonsterCard* tempT = nullptr;
+    tempS = dynamic_cast<MonsterCard* >(source);
+    tempT = dynamic_cast<MonsterCard* >(target);
+//    qDebug()<<(tempS == nullptr)<<" temps";
+//    qDebug()<<(tempT == nullptr)<<" tempt";
     bool SHaveArms = (tempS->getArms() != nullptr);
     bool THaveArms = (tempT->getArms() != nullptr);
     *tempS - *tempT;
 
     if (SHaveArms){
+        //给源玩家发己方状态变更
         sendMessage(sourcePlayer, 4);
         sendMessage(sourcePlayer, source->getId());
         sendMessage(sourcePlayer, tempS->getArms()->getAttackBuf());
+        sourcePlayer->getSocket().flush();
+
+        //给源玩家发对方状态变更
+        sendMessage(sourcePlayer, 4);
+        sendMessage(sourcePlayer, target->getId());
+        sendMessage(sourcePlayer, tempT->getArms()->getAttackBuf());
+        sourcePlayer->getSocket().flush();
     }
     else {
+        //给源玩家发己方状态变更
         sendMessage(sourcePlayer, 5);
         sendMessage(sourcePlayer, source->getId());
         sendMessage(sourcePlayer, tempS->getAttack());
+        sourcePlayer->getSocket().flush();
+
+        //给源玩家发对方状态变更
+        sendMessage(sourcePlayer, 5);
+        sendMessage(sourcePlayer, target->getId());
+        sendMessage(sourcePlayer, tempT->getAttack());
+        sourcePlayer->getSocket().flush();
     }
-    sourcePlayer->getSocket().flush();
+
 
     if (THaveArms){
+        //给目标玩家发己方状态变更
         sendMessage(targetPlayer, 4);
         sendMessage(targetPlayer, source->getId());
+        sendMessage(targetPlayer, tempS->getArms()->getAttackBuf());
+        targetPlayer->getSocket().flush();
+
+        //给目标玩家发对方状态变更
+        sendMessage(targetPlayer, 4);
+        sendMessage(targetPlayer, target->getId());
         sendMessage(targetPlayer, tempT->getArms()->getAttackBuf());
+        targetPlayer->getSocket().flush();
     }
     else {
+        //给目标玩家发己方状态变更
         sendMessage(targetPlayer, 5);
         sendMessage(targetPlayer, source->getId());
+        sendMessage(targetPlayer, tempS->getAttack());
+        targetPlayer->getSocket().flush();
+
+        //给目标玩家发对方状态变更
+        sendMessage(targetPlayer, 5);
+        sendMessage(targetPlayer, target->getId());
         sendMessage(targetPlayer, tempT->getAttack());
+        targetPlayer->getSocket().flush();
     }
-    targetPlayer->getSocket().flush();
+
 }
 
 //怪物对人攻击
@@ -375,12 +423,22 @@ void Server::doTurnStart()
 {
     qDebug()<<this->_nextTurn;
     Player * player = (this->_nextTurn == 0)? this->_gamePair.first : this->_gamePair.second;
+    Player * eplayer = (this->_nextTurn == 0)? this->_gamePair.second : this->_gamePair.first;
     this->_nextTurn = this->_nextTurn^1;
-
+    //给回合开始方加费 发牌
+    int getC = player->getNextConsume();
+    player->setConsume(player->getConsume() + getC);
     sendMessage(player, 1);
-    sendMessage(player, player->getNextConsume());
+    sendMessage(player, getC);
     sendMessage(player, player->getCardFromDeck());
     player->getSocket().flush();
+    //告诉对方
+    sendMessage(eplayer, 2);
+    sendMessage(eplayer, 1);
+    sendMessage(eplayer, player->getHP());
+    sendMessage(eplayer, player->getConsume());
+    eplayer->getSocket().flush();
+    qDebug()<<player->getPlayerName()<<" to "<<eplayer->getPlayerName();
 }
 
 

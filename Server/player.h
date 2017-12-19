@@ -2,8 +2,9 @@
 #define PLAYER_H
 #include <QObject>
 #include <QTcpSocket>
-#include <QHash>
+#include <QMap>
 #include <QQueue>
+#include <QStandardItem>
 #include "carddeck.h"
 
 class Player : public QObject
@@ -26,14 +27,14 @@ public:
     inline const QString & getPlayerName() const { return this->_playerName; }
     inline void setPlayerName(QString & name) { this->_playerName = name; }
 
-    inline Card * getCard(int cardId){ return this->_totalCardDeck.take(cardId); }
+    inline Card * getCard(int cardId){ return this->_totalCardDeck[cardId]; }
     inline bool isMyCard(int cardId){ return this->_totalCardDeck.contains(cardId); }
     inline int getHP() const { return this->_HP; }
     inline void setHP(int HP) { this->_HP = HP; }
     inline int getConsume() const { return this->_consume; }
     inline void setConsume(int consume) { this->_consume = consume; }
 
-    void initTotalCard();
+    void initTotalCard(QStandardItemModel *model);
     int getNextConsume();
     Card const * getCardFromDeck();
 
@@ -42,7 +43,8 @@ private:
     QString _playerName;        //玩家名字
     int _HP;
     int _consume;
-    QHash<int, Card *> _totalCardDeck;   //玩家卡组
+    QMap<int, Card *> _totalCardDeck;   //玩家卡库
+    QList<Card *> _restCard;
 
     void initConsumQueue(); //初始化每回合得费队列
 signals:
