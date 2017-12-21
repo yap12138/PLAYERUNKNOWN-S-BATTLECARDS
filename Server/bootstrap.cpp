@@ -34,8 +34,8 @@ ServerBootstrap::~ServerBootstrap()
 void ServerBootstrap::initServer()
 {
     _server = new QTcpServer(this);
+    _localHost = QHostAddress::LocalHost;
     //_localHost = getHostConnectedIP();
-    _localHost = getHostConnectedIP();
     _server->listen(_localHost, 5000);
     connect(_server, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
     this->ui->lab_server->setText(_localHost.toString());

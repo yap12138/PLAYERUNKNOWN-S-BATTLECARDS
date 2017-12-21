@@ -40,6 +40,14 @@ int MonsterCard::getCategory() const
     return this->_category;
 }
 
+void MonsterCard::removeArms()
+{
+    if (this->_arms == nullptr)
+        return;
+    this->_arms->_owner = nullptr;
+    this->_arms = nullptr;
+}
+
 MonsterCard &MonsterCard::operator =(const MonsterCard & other)
 {
     if(this == &other)

@@ -26,11 +26,11 @@ void Player::initTotalCard(QStandardItemModel *model)
     //每一种类卡牌各两张放入卡组
     for (int i = 0; i < 2; i++)
     {
-//        Card * var1 = new Magic_AGiftFromTeacher();
-//        Card * var2 = new Magic_FireBall();
-//        Card * var3 = new Magic_KingSpell();
-//        Card * var4 = new Magic_WakeUp();
-//        Card * var5 = new Magic_WindStrom();
+        Card * var1 = new Magic_AGiftFromTeacher();
+        Card * var2 = new Magic_FireBall();
+        Card * var3 = new Magic_KingSpell();
+        Card * var4 = new Magic_WakeUp();
+        Card * var5 = new Magic_WindStrom();
 
         Card * var6 = new Monster_CrazyCow();
         Card * var7 = new Monster_Devil();
@@ -45,11 +45,11 @@ void Player::initTotalCard(QStandardItemModel *model)
 //        Card * var15 = new Arms_InfinityEdge();
 //        Card * var16 = new Arms_Nokia();
 
-//        this->_totalCardDeck.insert(var1->getId(), var1);
-//        this->_totalCardDeck.insert(var2->getId(), var2);
-//        this->_totalCardDeck.insert(var3->getId(), var3);
-//        this->_totalCardDeck.insert(var4->getId(), var4);
-//        this->_totalCardDeck.insert(var5->getId(), var5);
+        this->_totalCardDeck.insert(var1->getId(), var1);
+        this->_totalCardDeck.insert(var2->getId(), var2);
+        this->_totalCardDeck.insert(var3->getId(), var3);
+        this->_totalCardDeck.insert(var4->getId(), var4);
+        this->_totalCardDeck.insert(var5->getId(), var5);
         this->_totalCardDeck.insert(var6->getId(), var6);
         this->_totalCardDeck.insert(var7->getId(), var7);
         this->_totalCardDeck.insert(var8->getId(), var8);

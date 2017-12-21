@@ -26,10 +26,11 @@ public:
     inline bool hasAttack() const { return this->_hasAttack; }
     inline void setHasAttack(bool param) { this->_hasAttack = param; }
     inline const ArmsCard * getArms() const { return this->_arms; }
-    inline void setArms(ArmsCard & arms) { this->_arms = &arms; }
+    //inline void setArms(ArmsCard & arms) { this->_arms = &arms; }
+
+    void removeArms();    //移除武器
 
     MonsterCard & operator =(const MonsterCard &);
-
     void operator + (ArmsCard &);
     MonsterCard & operator - (MonsterCard &);
     CARDSHARED_EXPORT friend QDataStream &operator<<(QDataStream &, const MonsterCard &);
