@@ -2,6 +2,7 @@
 #define SERVER_H
 #include <utility>
 #include <QObject>
+#include <QStandardItem>
 #include "player.h"
 
 typedef std::pair<Player *, Player *> PlayerPair;
@@ -10,11 +11,13 @@ class Server : public QObject
 {
     Q_OBJECT
 public:
-    explicit Server(Player* p1, Player* p2, QObject *parent = nullptr);
+    explicit Server(Player* p1, Player* p2, QStandardItemModel *model, QObject *parent = nullptr);
     ~Server();
     inline const PlayerPair & getPlayers() const { return this->_gamePair; }
 
 private:
+    QStandardItemModel *_model;
+
     static int _serialID;
     int _serverID;
     PlayerPair _gamePair;

@@ -6,12 +6,21 @@
 Player::Player(QTcpSocket * socket, QObject *parent)
     : QObject(parent), _clientSocket(*socket)
 {
-    this->_HP = 30;
-    this->_consume = 0;
-    initConsumQueue();
+
+}
+
+Player::~Player()
+{
+    if (!this->_totalCardDeck.isEmpty())
+    {
+        foreach (auto var, this->_totalCardDeck) {
+            this->_totalCardDeck.remove(var->getId());
+            delete var;
+        }
+    }
 }
 //172.16.31.9
-void Player::initTotalCard()
+void Player::initTotalCard(QStandardItemModel *model)
 {
     //先将list里的卡牌清空
     if (!this->_totalCardDeck.isEmpty())
@@ -62,6 +71,20 @@ void Player::initTotalCard()
         this->_totalCardDeck.insert(var15->getId(), var15);
         this->_totalCardDeck.insert(var16->getId(), var16);
     }
+
+    this->_restCard = _totalCardDeck.values();
+
+    int baseIndex = model->rowCount();
+    for(int i = 0; i < _restCard.size(); i++)
+    {
+        model->setItem(baseIndex + i, 0, new QStandardItem(QString::number(this->_clientSocket.peerPort()) +" "+ this->_playerName));
+        //设置字符颜色
+        model->item(baseIndex + i,0)->setForeground(QBrush(QColor(255, 0, 0)));
+        //设置字符位置
+        model->item(baseIndex + i,0)->setTextAlignment(Qt::AlignCenter);
+        model->setItem(baseIndex + i, 1, new QStandardItem(QString::number(_restCard[i]->getId())));
+        model->setItem(baseIndex + i, 2, new QStandardItem(_restCard[i]->getName()));
+    }
 }
 
 int Player::getNextConsume()
@@ -73,11 +96,16 @@ int Player::getNextConsume()
 
 const Card *Player::getCardFromDeck()
 {
-    int index = qrand()%this->_totalCardDeck.size();
-    QList<Card *> temp = this->_totalCardDeck.values();
-    Card * card = temp.takeAt(index);
-    this->_totalCardDeck.remove(card->getId());
+    int index = qrand()%this->_restCard.size();
+    Card * card = this->_restCard.takeAt(index);
     return card;
+}
+
+void Player::reset()
+{
+    this->_HP = 30;
+    this->_consume = 0;
+    initConsumQueue();
 }
 
 
@@ -85,6 +113,6 @@ void Player::initConsumQueue()
 {
     for(int i = 0; i < 10; i++)
     {
-        this->_consumeForTurn.enqueue(3);
+        this->_consumeForTurn.enqueue(10);
     }
 }

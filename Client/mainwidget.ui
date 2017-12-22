@@ -52,6 +52,9 @@
    <property name="autoFillBackground">
     <bool>true</bool>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -60,7 +63,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>455</y>
+     <y>460</y>
      <width>150</width>
      <height>200</height>
     </rect>
@@ -88,11 +91,11 @@
     <string>头像</string>
    </property>
   </widget>
-  <widget class="QLabel" name="_numOfCards">
+  <widget class="QLabel" name="_numOfCards_m">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>495</y>
+     <y>500</y>
      <width>90</width>
      <height>120</height>
     </rect>
@@ -107,7 +110,7 @@
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>66</string>
+    <string>32</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -117,7 +120,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>110</y>
+     <y>180</y>
      <width>150</width>
      <height>200</height>
     </rect>
@@ -145,11 +148,11 @@
     <string>头像</string>
    </property>
   </widget>
-  <widget class="QLabel" name="_numOfCards_2">
+  <widget class="QLabel" name="_numOfCards_e">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>160</y>
+     <y>220</y>
      <width>90</width>
      <height>120</height>
     </rect>
@@ -164,13 +167,13 @@
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>66</string>
+    <string>32</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="_playCard">
    <property name="geometry">
     <rect>
      <x>1180</x>
@@ -198,124 +201,501 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>103</x>
      <y>800</y>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="text">
-    <string>费</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="img.qrc">:/cardWidget/resoure/img/consume.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>770</y>
-     <width>70</width>
-     <height>20</height>
+     <x>103</x>
+     <y>750</y>
+     <width>30</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="text">
-    <string>HP:</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="img.qrc">:/cardWidget/resoure/img/attack.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::LinksAccessibleByMouse</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="_turnEnd">
+   <property name="geometry">
+    <rect>
+     <x>1180</x>
+     <y>570</y>
+     <width>80</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>回合结束</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>135</x>
+     <y>750</y>
+     <width>20</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>X</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>135</x>
+     <y>800</y>
+     <width>20</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>X</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_my_hp">
+   <property name="geometry">
+    <rect>
+     <x>155</x>
+     <y>750</y>
+     <width>31</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>30</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_my_consume">
+   <property name="geometry">
+    <rect>
+     <x>155</x>
+     <y>800</y>
+     <width>31</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>0</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>20</y>
-     <width>70</width>
-     <height>20</height>
+     <x>103</x>
+     <y>0</y>
+     <width>30</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="text">
-    <string>HP:</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="img.qrc">:/cardWidget/resoure/img/attack.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="textInteractionFlags">
+    <set>Qt::LinksAccessibleByMouse</set>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>103</x>
      <y>50</y>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>70</width>
-     <height>20</height>
+     <width>30</width>
+     <height>50</height>
     </size>
    </property>
    <property name="text">
-    <string>费</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="img.qrc">:/cardWidget/resoure/img/consume.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>1170</x>
-     <y>600</y>
-     <width>93</width>
-     <height>28</height>
+     <x>135</x>
+     <y>0</y>
+     <width>20</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>X</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>135</x>
+     <y>50</y>
+     <width>20</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>X</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_enemy_hp">
+   <property name="geometry">
+    <rect>
+     <x>155</x>
+     <y>0</y>
+     <width>31</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>30</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_enemy_consume">
+   <property name="geometry">
+    <rect>
+     <x>155</x>
+     <y>50</y>
+     <width>31</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>18</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="p2_name">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>110</y>
+     <width>181</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>15</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="p1_name">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>710</y>
+     <width>181</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>15</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="_attackPlayer">
+   <property name="geometry">
+    <rect>
+     <x>1180</x>
+     <y>700</y>
+     <width>80</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>攻击玩家</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="_attackMonster">
+   <property name="geometry">
+    <rect>
+     <x>1180</x>
+     <y>750</y>
+     <width>80</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>攻击怪兽</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="_detailName">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>400</y>
+     <width>300</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="_detailDescription">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>450</y>
+     <width>300</width>
+     <height>100</height>
+    </rect>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="_battleLog">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>550</y>
+     <width>300</width>
+     <height>300</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="_cancel">
+   <property name="geometry">
+    <rect>
+     <x>1180</x>
+     <y>800</y>
+     <width>80</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>取消</string>
    </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="img.qrc"/>
+ </resources>
  <connections/>
 </ui>
