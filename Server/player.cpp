@@ -6,9 +6,18 @@
 Player::Player(QTcpSocket * socket, QObject *parent)
     : QObject(parent), _clientSocket(*socket)
 {
-    this->_HP = 30;
-    this->_consume = 0;
-    initConsumQueue();
+
+}
+
+Player::~Player()
+{
+    if (!this->_totalCardDeck.isEmpty())
+    {
+        foreach (auto var, this->_totalCardDeck) {
+            this->_totalCardDeck.remove(var->getId());
+            delete var;
+        }
+    }
 }
 //172.16.31.9
 void Player::initTotalCard(QStandardItemModel *model)
@@ -39,11 +48,11 @@ void Player::initTotalCard(QStandardItemModel *model)
         Card * var10 = new Monster_Peashooter();
         Card * var11 = new Monster_WhiteFriend();
 
-//        Card * var12 = new Arms_98K();
-//        Card * var13 = new Arms_ArchangelSword();
-//        Card * var14 = new Arms_DeathfireStaff();
-//        Card * var15 = new Arms_InfinityEdge();
-//        Card * var16 = new Arms_Nokia();
+        Card * var12 = new Arms_98K();
+        Card * var13 = new Arms_ArchangelSword();
+        Card * var14 = new Arms_DeathfireStaff();
+        Card * var15 = new Arms_InfinityEdge();
+        Card * var16 = new Arms_Nokia();
 
         this->_totalCardDeck.insert(var1->getId(), var1);
         this->_totalCardDeck.insert(var2->getId(), var2);
@@ -56,11 +65,11 @@ void Player::initTotalCard(QStandardItemModel *model)
         this->_totalCardDeck.insert(var9->getId(), var9);
         this->_totalCardDeck.insert(var10->getId(), var10);
         this->_totalCardDeck.insert(var11->getId(), var11);
-//        this->_totalCardDeck.insert(var12->getId(), var12);
-//        this->_totalCardDeck.insert(var13->getId(), var13);
-//        this->_totalCardDeck.insert(var14->getId(), var14);
-//        this->_totalCardDeck.insert(var15->getId(), var15);
-//        this->_totalCardDeck.insert(var16->getId(), var16);
+        this->_totalCardDeck.insert(var12->getId(), var12);
+        this->_totalCardDeck.insert(var13->getId(), var13);
+        this->_totalCardDeck.insert(var14->getId(), var14);
+        this->_totalCardDeck.insert(var15->getId(), var15);
+        this->_totalCardDeck.insert(var16->getId(), var16);
     }
 
     this->_restCard = _totalCardDeck.values();
@@ -90,6 +99,13 @@ const Card *Player::getCardFromDeck()
     int index = qrand()%this->_restCard.size();
     Card * card = this->_restCard.takeAt(index);
     return card;
+}
+
+void Player::reset()
+{
+    this->_HP = 30;
+    this->_consume = 0;
+    initConsumQueue();
 }
 
 

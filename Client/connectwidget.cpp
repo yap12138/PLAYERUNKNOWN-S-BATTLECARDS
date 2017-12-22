@@ -1,12 +1,19 @@
 #include "connectwidget.h"
 #include "ui_connectwidget.h"
+#include <QString>
+#include <QApplication>
 
-ConnectWidget::ConnectWidget(QWidget *parent) :
+ConnectWidget::ConnectWidget(QTcpSocket *client, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ConnectWidget)
 {
+    _client =  client;
     ui->setupUi(this);
-    initClient();
+
+    //@yap
+    ui->_ip_input->setText(QStringLiteral("127.0.0.1"));
+
+    connect(ui->_conn_btn, SIGNAL(clicked(bool)), this, SLOT(tryToConnect()));
 }
 
 ConnectWidget::~ConnectWidget()
@@ -14,64 +21,35 @@ ConnectWidget::~ConnectWidget()
     delete ui;
 }
 
-Ui::ConnectWidget ConnectWidget::getUi()
+QString ConnectWidget::getName()
 {
-    return *ui;
+    return ui->_username_input->toPlainText();
 }
 
-bool ConnectWidget::eventFilter(QObject *watched, QEvent *event)
+//@yap
+void ConnectWidget::resetWidget()
 {
-    if(watched == ui->pushButton)
+    QApplication::restoreOverrideCursor();
+    this->hide();
+}
+
+//@yap
+void ConnectWidget::tryToConnect()
+{
+    QHostAddress *Address = new QHostAddress(ui->_ip_input->toPlainText());
+    _client->connectToHost(*Address,5000);
+
+    if ( !_client->waitForConnected(10000) )
     {
-        if(event->type()==QEvent::MouseButtonPress)
-        {
-            _client = new QTcpSocket(this);
-            _client->connectToHost(QHostAddress(ui->textEdit->toPlainText()),5000);
-            QDataStream s(_client);
-            s<<0;
-            s<<QStringLiteral("asd");
-            //sendMessage();
-            this->hide();
-            return true;
-        }
+        return;
     }
-    return false;
-}
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
-void ConnectWidget::initClient()
-{
-    ui->pushButton->installEventFilter(this);
-    //client->connectToHost(QHostAddress());
-}
-
-QString ConnectWidget::getKeyFromSocket(const QTcpSocket *) const
-{
-
-}
-
-void ConnectWidget::getClientInfo(QTcpSocket * const socket, QDataStream &stream)
-{
-
-}
-
-void ConnectWidget::acceptConnection()
-{
-
-}
-
-void ConnectWidget::onDisConnect()
-{
-
-}
-
-void ConnectWidget::onReadyRead()
-{
-
-}
-
-void ConnectWidget::sendMessage()
-{
     QDataStream s(_client);
     s<<0;
-    s<<QStringLiteral("zxc");
+    s<<ui->_username_input->toPlainText();
+    _client->flush();
 }
+
+
+

@@ -12,16 +12,23 @@ Server::Server(Player *p1, Player *p2, QStandardItemModel *model, QObject *paren
     this->_model = model;
     bindServer(p1->getSocket());
     bindServer(p2->getSocket());
-    //给双方发送匹配成功
-    sendMessage(p1, 0);
-    sendMessage(p1, p2->getPlayerName());
-    p1->getSocket().flush();
-    sendMessage(p2, 0);
-    sendMessage(p2, p1->getPlayerName());
-    p2->getSocket().flush();
     //初始化双方卡组
     p1->initTotalCard(this->_model);
     p2->initTotalCard(this->_model);
+    //0表示1p先攻，1表示2p先攻
+    int whoToFirst = qrand()%2;
+    this->_nextTurn = whoToFirst;
+    //给双方发送匹配成功
+    sendMessage(p1, 0);
+    sendMessage(p1, p2->getPlayerName());
+    sendMessage(p1, this->_nextTurn);
+    sendMessage(p1, p1->getCardDeckSize());
+    p1->getSocket().flush();
+    sendMessage(p2, 0);
+    sendMessage(p2, p1->getPlayerName());
+    sendMessage(p2, this->_nextTurn^1);
+    sendMessage(p2, p1->getCardDeckSize());
+    p2->getSocket().flush();
 
     QTimer::singleShot(1000, this, SLOT(doGameStart()));
 }
@@ -257,6 +264,9 @@ void Server::doRequest()
 
                     sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());    //出装备卡扣费
 
+                    //将targetPlayer设置回来
+                    targetPlayer = getPlayerFromSocket(rev, 1);
+
                     //告诉对手更新自己的信息
                     sendMessage(targetPlayer, 2);
                     sendMessage(targetPlayer, 1);
@@ -417,10 +427,13 @@ void Server::doError(QAbstractSocket::SocketError e)
 void Server::doGameStart()
 {
     qDebug()<<"do game start";
-    //0表示1p先攻，1表示2p先攻
-    int whoToFirst = qrand()%2;
+
     Player * p1 = this->_gamePair.first;
     Player * p2 = this->_gamePair.second;
+
+    p1->reset();
+    p2->reset();
+
     //开局报头
     sendMessage(p1, 6);
     sendMessage(p2, 6);
@@ -433,22 +446,24 @@ void Server::doGameStart()
     p1->getSocket().flush();
     p2->getSocket().flush();
 
-    this->_nextTurn = whoToFirst;
+
     QTimer::singleShot(1000, this, SLOT(doTurnStart()));
 }
 
 void Server::doTurnStart()
 {
-    qDebug()<<this->_nextTurn;
     Player * player = (this->_nextTurn == 0)? this->_gamePair.first : this->_gamePair.second;
     Player * eplayer = (this->_nextTurn == 0)? this->_gamePair.second : this->_gamePair.first;
     this->_nextTurn = this->_nextTurn^1;
     //给回合开始方加费 发牌
+
     int getC = player->getNextConsume();
     player->setConsume(player->getConsume() + getC);
     sendMessage(player, 1);
     sendMessage(player, getC);
-    sendMessage(player, player->getCardFromDeck());
+    //判断剩余卡组没卡情况
+    if (player->getRestSize() >0 )
+        sendMessage(player, player->getCardFromDeck());
     player->getSocket().flush();
     //告诉对方
     sendMessage(eplayer, 2);
