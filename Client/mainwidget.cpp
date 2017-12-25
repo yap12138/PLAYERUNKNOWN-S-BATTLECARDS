@@ -881,12 +881,9 @@ void Mainwidget::MonsterDamaged(QDataStream &stream)
 //初始发牌              出牌顺序，QList
 void Mainwidget::CreateCard(QDataStream &stream)
 {
-    for(int i = 0; i < 4; i++)
-    {
-        int category;
-        stream>>category;
-        GetNewCard(stream,category);
-    }
+    int category;
+    stream>>category;
+    GetNewCard(stream,category);
 }
 
 //敌方断开连接 场地清空

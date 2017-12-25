@@ -434,12 +434,12 @@ void Server::doGameStart()
     p1->reset();
     p2->reset();
 
-    //开局报头
-    sendMessage(p1, 6);
-    sendMessage(p2, 6);
-    //4张卡牌
-    for (int i = 0; i < 4; i++)
+    //3张卡牌
+    for (int i = 0; i < 3; i++)
     {
+        //开局报头
+        sendMessage(p1, 6);
+        sendMessage(p2, 6);
         sendMessage(p1, p1->getCardFromDeck());
         sendMessage(p2, p2->getCardFromDeck());
     }

@@ -113,6 +113,6 @@ void Player::initConsumQueue()
 {
     for(int i = 0; i < 10; i++)
     {
-        this->_consumeForTurn.enqueue(10);
+        this->_consumeForTurn.enqueue(6);
     }
 }
