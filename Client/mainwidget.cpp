@@ -1,7 +1,7 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include <QDebug>
-#include "ui_cardwidget.h"
+
 Mainwidget::Mainwidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
@@ -10,6 +10,18 @@ Mainwidget::Mainwidget(QWidget *parent) :
 
     _detailCard = new CardWidget(this,2);
     _detailCard->setGeometry(1280,0,_detailCard->width(),_detailCard->height());
+    // 设置卡详情背景半透明
+    QPalette myPalette;
+    QColor myColor(255,255,255);
+    myColor.setAlphaF(0.3);
+    myPalette.setBrush(backgroundRole(),myColor);
+    _detailCard->setPalette(myPalette);
+    _detailCard->setAutoFillBackground(true);
+    this->ui->_detailName->setPalette(myPalette);
+    this->ui->_detailName->setAutoFillBackground(true);
+    this->ui->_detailDescription->setPalette(myPalette);
+    this->ui->_detailDescription->setAutoFillBackground(true);
+
     _client = new QTcpSocket(this);
     _connectUi = new ConnectWidget(_client,this);
     //@yap
@@ -42,7 +54,33 @@ bool Mainwidget::eventFilter(QObject *watched, QEvent *event)
         ui->_detailName->setText(card->getName());
         ui->_detailDescription->setText(card->getDescription());
         this->_detailCard->_consume->setText(QString::number(card->getConsume()));
-        //TODO
+        this->_detailCard->setImage(*(cw->getImage()));
+        this->_detailCard->_weapon_bg->hide();  //先隐藏武器栏
+        this->_detailCard->_weapon->setText(QStringLiteral(""));
+        if (dynamic_cast<MagicCard *>(card) == nullptr)
+        {
+            MonsterCard * t1;
+            this->_detailCard->_attack_bg->show();
+            if ((t1=dynamic_cast<MonsterCard *>(card)) != nullptr)
+            {
+                this->_detailCard->_attack->setText(QString::number(t1->getAttack()));
+                if (t1->getArms() != nullptr)
+                {
+                    this->_detailCard->_weapon_bg->show();  //有武器则将武器栏显示出来
+                    this->_detailCard->_weapon->setText(QString::number(t1->getArms()->getAttackBuf()));
+                }
+            }
+            else
+            {
+                ArmsCard * t2 = dynamic_cast<ArmsCard *>(card);
+                this->_detailCard->_attack->setText(QString::number(t2->getAttackBuf()));
+            }
+        }
+        else
+        {
+            this->_detailCard->_attack_bg->hide();
+            this->_detailCard->_attack->setText(QStringLiteral(""));
+        }
     }
     else if(event->type() == QEvent::Leave)
     {
@@ -131,13 +169,13 @@ void Mainwidget::setBackground()
     randNum = qrand() % 3;
     switch (randNum) {
     case 0:
-        this->ui->_backgroud->setStyleSheet("QLabel{background-image: url(:/resoure/img/bg1.jpg)}");
+        this->ui->_backgroud->setStyleSheet("QLabel{background-image: url(:/background/resoure/img/bg1.jpg)}");
         break;
     case 1:
-        this->ui->_backgroud->setStyleSheet("QLabel{background-image: url(:/resoure/img/bg2.jpg)}");
+        this->ui->_backgroud->setStyleSheet("QLabel{background-image: url(:/background/resoure/img/bg2.jpg)}");
         break;
     case 2:
-        this->ui->_backgroud->setStyleSheet("QLabel{background-image: url(:/resoure/img/bg3.jpg)}");
+        this->ui->_backgroud->setStyleSheet("QLabel{background-image: url(:/background/resoure/img/bg3.jpg)}");
 
         break;
     default:
@@ -1062,7 +1100,7 @@ QString Mainwidget::getCardImg(int category)
         filename = ":/cardWidget/resoure/img/attack.png";
         break;
     case 15:
-        filename = ":/cardWidget/resoure/img/attack.png";
+        filename = ":/card/resoure/cardres/peashooter.jpg";
         break;
     case 20:
         break;
@@ -1118,7 +1156,7 @@ void Mainwidget::DeleteHandCard(CardWidget *deleteCard, Card *usedCard)
 void Mainwidget::SetHandCardUI(Card *newCard, QString filename)
 {
     //创建部件，设置图片
-    if (this->_me.cardInHand.count()<=5){
+    if (this->_me.cardInHand.count()<5){
         CardWidget* newCardWidget = new CardWidget(this,1);
         //@yap
         newCardWidget->installEventFilter(this);
@@ -1139,6 +1177,9 @@ void Mainwidget::SetHandCardUI(Card *newCard, QString filename)
         }
         else if  (dynamic_cast<ArmsCard*>(newCard) != nullptr){//如果是装备卡设置攻击力
             newCardWidget->_attack->setText(QString::number(dynamic_cast<ArmsCard*>(newCard)->getAttackBuf()));
+        }
+        else {//魔法卡则不显示攻击图标
+            newCardWidget->_attack_bg->hide();
         }
         newCardWidget->show(0);//显示部件
         this->_me.battlerID.insert(newCard->getId(),newCard);//插入ID+卡的组

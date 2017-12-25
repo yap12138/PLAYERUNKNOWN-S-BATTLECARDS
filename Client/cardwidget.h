@@ -19,7 +19,9 @@ public:
     explicit CardWidget(QWidget *parent = 0, int mode = 1);
     ~CardWidget();
 
-    void setImage(const QPixmap &img);
+    inline const QPixmap * getImage() const { return this->_card->pixmap(); }
+
+    void setImage(const QPixmap &var_img);
     void show(int mode);
     void setOpacity(int level);
 
@@ -30,15 +32,16 @@ public:
     QLabel* _consume;
     QLabel* _attack;
     QLabel* _weapon;
+
     QLabel* _weapon_bg;
+    QLabel* _attack_bg;
 
     Card* _realCard = nullptr;
 private:
     Ui::CardWidget *ui;
 
     QLabel* _card_bg;
-    QLabel* _consume_bg;
-    QLabel* _attack_bg;
+    QLabel* _consume_bg; 
 
     QLabel* _card;
 

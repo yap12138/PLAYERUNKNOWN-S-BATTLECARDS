@@ -21,7 +21,7 @@ public:
     CARDSHARED_EXPORT friend QDataStream &operator<<(QDataStream &, const MagicCard &);
     CARDSHARED_EXPORT friend QDataStream &operator>>(QDataStream &, MagicCard &);
 protected:
-    int _skillBuff;     //目标id
+    int _skillBuff;     //能力值
     static const int _category = 2;  //卡牌种类
 };
 

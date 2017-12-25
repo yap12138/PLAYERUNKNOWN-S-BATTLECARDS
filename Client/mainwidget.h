@@ -2,17 +2,13 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QHBoxLayout>
 #include <QLabel>
-#include "connectwidget.h"
 #include <QtNetwork>
 #include <QHash>
-#include "card.h"
 #include "cardwidget.h"
-#include "monstercard.h"
-#include "magicdeck.h"
-#include "monsterdeck.h"
-#include "armsdeck.h"
+#include "connectwidget.h"
+#include "carddeck.h"
+
 namespace Ui {
 class Widget;
 }

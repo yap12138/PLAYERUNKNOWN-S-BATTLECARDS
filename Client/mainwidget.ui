@@ -126,10 +126,26 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(85, 255, 0);</string>
+    <string notr="true">background-color: rgb(85, 255, 0);
+</string>
    </property>
    <property name="text">
     <string/>
+   </property>
+   <property name="scaledContents">
+    <bool>false</bool>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+   <property name="indent">
+    <number>-1</number>
+   </property>
+   <property name="openExternalLinks">
+    <bool>false</bool>
    </property>
   </widget>
   <widget class="QLabel" name="_photo_2">
@@ -632,10 +648,10 @@
     </rect>
    </property>
    <property name="autoFillBackground">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="frameShape">
-    <enum>QFrame::Box</enum>
+    <enum>QFrame::NoFrame</enum>
    </property>
    <property name="text">
     <string/>
@@ -657,10 +673,10 @@
     </rect>
    </property>
    <property name="autoFillBackground">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="frameShape">
-    <enum>QFrame::Box</enum>
+    <enum>QFrame::NoFrame</enum>
    </property>
    <property name="text">
     <string/>
@@ -692,6 +708,125 @@
     <string>取消</string>
    </property>
   </widget>
+  <widget class="QLabel" name="_player_turn">
+   <property name="geometry">
+    <rect>
+     <x>-410</x>
+     <y>390</y>
+     <width>410</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>42</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 170, 127);</string>
+   </property>
+   <property name="text">
+    <string>Player Turn</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="_enemy_turn">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>390</y>
+     <width>410</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>42</pointsize>
+     <weight>75</weight>
+     <italic>true</italic>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 170, 127);</string>
+   </property>
+   <property name="text">
+    <string>Enemy Turn</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>450</y>
+     <width>300</width>
+     <height>1</height>
+    </rect>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="Line" name="line_2">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>400</y>
+     <width>300</width>
+     <height>1</height>
+    </rect>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <zorder>_enemy_turn</zorder>
+  <zorder>_backgroud</zorder>
+  <zorder>_cardsLast</zorder>
+  <zorder>_photo</zorder>
+  <zorder>_numOfCards_m</zorder>
+  <zorder>_cardsLast_2</zorder>
+  <zorder>_photo_2</zorder>
+  <zorder>_numOfCards_e</zorder>
+  <zorder>_playCard</zorder>
+  <zorder>label</zorder>
+  <zorder>label_2</zorder>
+  <zorder>_turnEnd</zorder>
+  <zorder>label_5</zorder>
+  <zorder>label_6</zorder>
+  <zorder>label_my_hp</zorder>
+  <zorder>label_my_consume</zorder>
+  <zorder>label_3</zorder>
+  <zorder>label_4</zorder>
+  <zorder>label_7</zorder>
+  <zorder>label_8</zorder>
+  <zorder>label_enemy_hp</zorder>
+  <zorder>label_enemy_consume</zorder>
+  <zorder>p2_name</zorder>
+  <zorder>p1_name</zorder>
+  <zorder>_attackPlayer</zorder>
+  <zorder>_attackMonster</zorder>
+  <zorder>_detailName</zorder>
+  <zorder>_detailDescription</zorder>
+  <zorder>_battleLog</zorder>
+  <zorder>_cancel</zorder>
+  <zorder>_player_turn</zorder>
+  <zorder>line</zorder>
+  <zorder>line_2</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

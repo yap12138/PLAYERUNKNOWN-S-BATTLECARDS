@@ -1,6 +1,7 @@
 #include "cardwidget.h"
 #include "ui_cardwidget.h"
 #include <QMouseEvent>
+#include <QDebug>
 #include <QPainter>
 
 CardWidget::CardWidget(QWidget *parent, int mode) :
@@ -23,6 +24,8 @@ CardWidget::CardWidget(QWidget *parent, int mode) :
     //@yap
     this->_weapon_bg->hide();
 
+    this->setCursor(Qt::PointingHandCursor);
+
     setUpUi(mode);
 
     initAlpha();
@@ -42,8 +45,15 @@ CardWidget::~CardWidget()
         delete _realCard;
 }
 
-void CardWidget::setImage(const QPixmap &img)
+void CardWidget::setImage(const QPixmap &var_img)
 {
+    if (&var_img == 0)
+    {
+        qDebug()<<"null pixmap";
+        return;
+    }
+    QPixmap img = var_img.scaled(_card->size(), Qt::KeepAspectRatio);
+
     this->_card->setPixmap(img);
     this->_s_card = img;
     //this->_card->setMask(img.mask());
@@ -175,7 +185,8 @@ void CardWidget::setUpUi(int mode)
     this->_weapon_bg->setScaledContents(true);
 
     this->_card->setGeometry(QRect(30*mode, 20*mode, 90*mode, 130*mode));
-    this->_card->setScaledContents(true);
+    //this->_card->setScaledContents(true);
+    this->_card->setAlignment(Qt::AlignCenter);
     this->_card->lower();
     this->_card->setStyleSheet(QStringLiteral("background-color: rgba(79, 47, 22, 140);"));
 

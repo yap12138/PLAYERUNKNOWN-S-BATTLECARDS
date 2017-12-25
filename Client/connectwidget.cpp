@@ -1,7 +1,9 @@
 #include "connectwidget.h"
 #include "ui_connectwidget.h"
 #include <QString>
+#include <QTcpSocket>
 #include <QApplication>
+#include <QMessageBox>
 
 ConnectWidget::ConnectWidget(QTcpSocket *client, QWidget *parent) :
     QWidget(parent),
@@ -36,6 +38,13 @@ void ConnectWidget::resetWidget()
 //@yap
 void ConnectWidget::tryToConnect()
 {
+    if (_client->state() == QAbstractSocket::ConnectingState
+            || _client->state() == QAbstractSocket::ConnectedState)
+    {
+        QMessageBox::information(this, QStringLiteral("提示"), QStringLiteral("正在连接中/已连接"));
+        return;
+    }
+
     QHostAddress *Address = new QHostAddress(ui->_ip_input->toPlainText());
     _client->connectToHost(*Address,5000);
 
