@@ -3,6 +3,7 @@
         <file>resoure/img/attack.png</file>
         <file>resoure/img/card_bg.png</file>
         <file>resoure/img/consume.png</file>
+        <file>resoure/img/card_back.png</file>
     </qresource>
     <qresource prefix="/background">
         <file>resoure/img/bg3.jpg</file>
@@ -11,5 +12,15 @@
     </qresource>
     <qresource prefix="/card">
         <file>resoure/cardres/peashooter.jpg</file>
+        <file>resoure/cardres/crazy_cow.png</file>
+        <file>resoure/cardres/devil.png</file>
+        <file>resoure/cardres/dog.png</file>
+        <file>resoure/cardres/dragon_born.png</file>
+        <file>resoure/cardres/fire_ball.png</file>
+        <file>resoure/cardres/gift.png</file>
+        <file>resoure/cardres/king_spell.png</file>
+        <file>resoure/cardres/wake_up.png</file>
+        <file>resoure/cardres/white_friend.png</file>
+        <file>resoure/cardres/wind_storm.jpg</file>
     </qresource>
 </RCC>

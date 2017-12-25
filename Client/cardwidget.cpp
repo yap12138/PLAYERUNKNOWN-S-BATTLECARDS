@@ -29,13 +29,6 @@ CardWidget::CardWidget(QWidget *parent, int mode) :
     setUpUi(mode);
 
     initAlpha();
-    // 设置窗口部件背景半透明
-//    QPalette myPalette;
-//    QColor myColor(255,255,255);
-//    myColor.setAlphaF(0.7);
-//    myPalette.setBrush(backgroundRole(),myColor);
-//    this->setPalette(myPalette);
-//    this->setAutoFillBackground(true);
 }
 
 CardWidget::~CardWidget()

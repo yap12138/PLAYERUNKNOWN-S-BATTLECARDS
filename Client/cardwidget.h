@@ -19,7 +19,7 @@ public:
     explicit CardWidget(QWidget *parent = 0, int mode = 1);
     ~CardWidget();
 
-    inline const QPixmap * getImage() const { return this->_card->pixmap(); }
+    inline const QPixmap & getImage() const { return this->_s_card; }
 
     void setImage(const QPixmap &var_img);
     void show(int mode);

@@ -68,11 +68,14 @@
      <height>200</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(85, 255, 0);</string>
-   </property>
    <property name="text">
     <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="img.qrc">:/cardWidget/resoure/img/card_back.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="_photo">
@@ -125,15 +128,14 @@
      <height>200</height>
     </rect>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(85, 255, 0);
-</string>
-   </property>
    <property name="text">
     <string/>
    </property>
+   <property name="pixmap">
+    <pixmap resource="img.qrc">:/cardWidget/resoure/img/card_back.png</pixmap>
+   </property>
    <property name="scaledContents">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

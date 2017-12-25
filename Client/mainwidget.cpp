@@ -10,6 +10,7 @@ Mainwidget::Mainwidget(QWidget *parent) :
     ui->setupUi(this);
 
     initDetailArea();
+    initCardImg();
 
     _client = new QTcpSocket(this);
     _connectUi = new ConnectWidget(_client,this);
@@ -43,7 +44,7 @@ bool Mainwidget::eventFilter(QObject *watched, QEvent *event)
         ui->_detailName->setText(card->getName());
         ui->_detailDescription->setText(card->getDescription());
         this->_detailCard->_consume->setText(QString::number(card->getConsume()));
-        this->_detailCard->setImage(*(cw->getImage()));
+        this->_detailCard->setImage(_cardImg[card->getCategory()]);
         this->_detailCard->_weapon_bg->hide();  //先隐藏武器栏
         this->_detailCard->_weapon->setText(QStringLiteral(""));
         if (dynamic_cast<MagicCard *>(card) == nullptr)
@@ -171,6 +172,44 @@ void Mainwidget::initMap()
     this->enemyfieldMap[2].hasCard = false;
 }
 
+void Mainwidget::initCardImg()
+{
+    QPixmap var1(":/card/resoure/cardres/dragon_born.png");
+    this->_cardImg.insert(10, var1);
+    QPixmap var2(":/card/resoure/cardres/dog.png");
+    this->_cardImg.insert(11, var2);
+    QPixmap var3(":/card/resoure/cardres/crazy_cow.png");
+    this->_cardImg.insert(12, var3);
+    QPixmap var4(":/card/resoure/cardres/devil.png");
+    this->_cardImg.insert(13, var4);
+    QPixmap var5(":/card/resoure/cardres/white_friend.png");
+    this->_cardImg.insert(14, var5);
+    QPixmap var6(":/card/resoure/cardres/peashooter.jpg");
+    this->_cardImg.insert(15, var6);
+
+    QPixmap var7(":/card/resoure/cardres/fire_ball.png");
+    this->_cardImg.insert(20, var7);
+    QPixmap var8(":/card/resoure/cardres/wake_up.png");
+    this->_cardImg.insert(21, var8);
+    QPixmap var9(":/card/resoure/cardres/king_spell.png");
+    this->_cardImg.insert(22, var9);
+    QPixmap var10(":/card/resoure/cardres/wind_storm.jpg");
+    this->_cardImg.insert(23, var10);
+    QPixmap var11(":/card/resoure/cardres/gift.png");
+    this->_cardImg.insert(24, var11);
+
+    QPixmap var12(":/cardWidget/resoure/img/attack.png");
+    this->_cardImg.insert(31, var12);
+    QPixmap var13(":/cardWidget/resoure/img/attack.png");
+    this->_cardImg.insert(32, var13);
+    QPixmap var14(":/cardWidget/resoure/img/attack.png");
+    this->_cardImg.insert(33, var14);
+    QPixmap var15(":/cardWidget/resoure/img/attack.png");
+    this->_cardImg.insert(34, var15);
+    QPixmap var16(":/cardWidget/resoure/img/attack.png");
+    this->_cardImg.insert(35, var16);
+}
+
 void Mainwidget::setBackground()
 {
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
@@ -223,8 +262,8 @@ void Mainwidget::TurnStart(QDataStream &stream)
 void Mainwidget::GetNewCard(QDataStream &stream,int category)
 {
     Card *m;
-    QString filename;//根据category为filename指定相应的图片路径
-    filename = getCardImg(category);
+    //根据category为filename指定相应的图片路径
+    QPixmap & img = getCardImg(category);
     switch (category) {
     case 10:
         m = new Monster_DragonBorn();
@@ -283,7 +322,7 @@ void Mainwidget::GetNewCard(QDataStream &stream,int category)
         //更新UI
         qDebug()<<m->getName();
         //UI更新，插入到手牌组
-        SetHandCardUI(m,filename);
+        SetHandCardUI(m,img);
     }
     this->_me.oddCards--;
     this->ui->_numOfCards_m->setText(QString::number(this->_me.oddCards));
@@ -397,7 +436,7 @@ void Mainwidget::PlayCard()
                                 break;
                             }
                         }
-                        newCardWidget->setImage(QPixmap(getCardImg(newMonster->getCategory())));
+                        newCardWidget->setImage(getCardImg(newMonster->getCategory()));
                         //设置怪兽的HP
                         newCardWidget->_attack->setText(QString::number(newMonster->getAttack()));
                         newCardWidget->show(1);
@@ -584,78 +623,35 @@ void Mainwidget::EnemyPlayCard(QDataStream &stream)
     stream>>cardID;
     stream>>target;
     Card *m = nullptr;
+    QPixmap& img = getCardImg(category);
 
     if(target==-2)
     {
-
-        QString filename = getCardImg(category);
         switch (category) {
         case 10:
             m = new Monster_DragonBorn();
-            SetEnemyMonsterUI(cardID,m,filename);
+            SetEnemyMonsterUI(cardID,m,img);
             break;
         case 11:
             m = new Monster_DogInScau();
-            SetEnemyMonsterUI(cardID,m,filename);
+            SetEnemyMonsterUI(cardID,m,img);
             break;
         case 12:
             m = new Monster_CrazyCow();
-            SetEnemyMonsterUI(cardID,m,filename);
+            SetEnemyMonsterUI(cardID,m,img);
             break;
         case 13:
             m = new Monster_Devil();
-            SetEnemyMonsterUI(cardID,m,filename);
+            SetEnemyMonsterUI(cardID,m,img);
             break;
         case 14:
             m = new Monster_WhiteFriend();
-            SetEnemyMonsterUI(cardID,m,filename);
+            SetEnemyMonsterUI(cardID,m,img);
             break;
         case 15:
             m = new Monster_Peashooter();
-            SetEnemyMonsterUI(cardID,m,filename);
+            SetEnemyMonsterUI(cardID,m,img);
             break;
-        case 20:
-            m = new Magic_FireBall();
-
-            //@yap 以下都注释了
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 21:
-//            m = new Magic_WakeUp();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 22:
-//            m = new Magic_KingSpell();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 23:
-//            m = new Magic_WindStrom();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 24:
-//            m = new Magic_AGiftFromTeacher();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 31:
-//            m = new Arms_98K();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 32:
-//            m = new Arms_InfinityEdge();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 33:
-//            m = new Arms_ArchangelSword();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 34:
-//            m = new Arms_DeathfireStaff();
-//            //SetDetailedCard(m,filename);
-//            break;
-//        case 35:
-//            m = new Arms_Nokia();
-//            //SetDetailedCard(m,filename);
-//            break;
         default:
             break;
         }
@@ -737,7 +733,10 @@ void Mainwidget::EnemyPlayCard(QDataStream &stream)
             *mc + *ac;
         }
         else if (m != nullptr)  //如果不是装备牌那就delete掉
+        {
+            SetDetailedCard(m, img);
             delete m;
+        }
     }
     this->ui->_battleLog->append(log_str);
 }
@@ -1109,52 +1108,10 @@ void Mainwidget::sendMessage(int MyCardId, int EnemyCardId)//发送信息
     this->_client->flush();
 }
 
-QString Mainwidget::getCardImg(int category)
+QPixmap &Mainwidget::getCardImg(int category)
 {
-    QString filename;
-    switch (category) {
-    case 10:
-        filename = ":/cardWidget/resoure/img/attack.png";
-        break;
-    case 11:
-        filename = ":/cardWidget/resoure/img/attack.png";
-        break;
-    case 12:
-        filename = ":/cardWidget/resoure/img/attack.png";
-        break;
-    case 13:
-        filename = ":/cardWidget/resoure/img/attack.png";
-        break;
-    case 14:
-        filename = ":/cardWidget/resoure/img/attack.png";
-        break;
-    case 15:
-        filename = ":/card/resoure/cardres/peashooter.jpg";
-        break;
-    case 20:
-        break;
-    case 21:
-        break;
-    case 22:
-        break;
-    case 23:
-        break;
-    case 24:
-        break;
-    case 31:
-        break;
-    case 32:
-        break;
-    case 33:
-        break;
-    case 34:
-        break;
-    case 35:
-        break;
-    default:
-        break;
-    }
-    return filename;
+    QPixmap& img = _cardImg[category];
+    return img;
 }
 
 void Mainwidget::DeleteHandCard(CardWidget *deleteCard, Card *usedCard)
@@ -1182,7 +1139,7 @@ void Mainwidget::DeleteHandCard(CardWidget *deleteCard, Card *usedCard)
     }
 }
 
-void Mainwidget::SetHandCardUI(Card *newCard, QString filename)
+void Mainwidget::SetHandCardUI(Card *newCard, QPixmap &img)
 {
     //创建部件，设置图片
     if (this->_me.cardInHand.count()<5){
@@ -1199,7 +1156,7 @@ void Mainwidget::SetHandCardUI(Card *newCard, QString filename)
                 break;
             }
         }
-        newCardWidget->setImage(QPixmap(filename));//设置背景
+        newCardWidget->setImage(img);//设置背景
         newCardWidget->_consume->setText(QString::number(newCard->getConsume()));//设置费用
         if  (dynamic_cast<MonsterCard*>(newCard) != nullptr){//如果是怪兽卡设置攻击力
             newCardWidget->_attack->setText(QString::number(dynamic_cast<MonsterCard*>(newCard)->getAttack()));
@@ -1263,7 +1220,7 @@ void Mainwidget::DisableCard()
     }
 }
 
-void Mainwidget::SetEnemyMonsterUI(int id, Card *newCard, QString filename)
+void Mainwidget::SetEnemyMonsterUI(int id, Card *newCard, QPixmap &img)
 {
     //创建部件，设置图片
     if (this->_enemy.battleField.count()<3){
@@ -1279,11 +1236,23 @@ void Mainwidget::SetEnemyMonsterUI(int id, Card *newCard, QString filename)
                 break;
             }
         }
-        newCardWidget->setImage(QPixmap(filename));//设置背景
+        newCardWidget->setImage(img);//设置背景
         if  (dynamic_cast<MonsterCard*>(newCard) != nullptr){//如果是怪兽卡设置攻击力
             newCardWidget->_attack->setText(QString::number(dynamic_cast<MonsterCard*>(newCard)->getAttack()));
         }
         newCardWidget->show(1);//显示部件
         connect(newCardWidget,SIGNAL(SMyPointer(CardWidget*)),this,SLOT(OnWidgetClicked(CardWidget*)));
     }
+}
+
+void Mainwidget::SetDetailedCard(Card *card, QPixmap &img)
+{
+    this->ui->_detailName->setText(card->getName());
+    this->ui->_detailDescription->setText(card->getDescription());
+    this->_detailCard->_consume->setText(QString::number(card->getConsume()));
+    this->_detailCard->setImage(img);
+    this->_detailCard->_weapon->setText(QStringLiteral(""));
+    this->_detailCard->_weapon_bg->hide();
+    this->_detailCard->_attack->setText(QStringLiteral(""));
+    this->_detailCard->_attack_bg->hide();
 }

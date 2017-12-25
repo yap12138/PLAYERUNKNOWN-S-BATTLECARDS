@@ -73,6 +73,8 @@ private:
     WidgetMap fieldMap[3];
     WidgetMap enemyfieldMap[3];
 
+    QMap<int, QPixmap> _cardImg;
+
     //@yap
     CardWidget* _detailCard;    //右上详情
 
@@ -80,18 +82,20 @@ private:
     void initConnect();  //初始化界面
     void initDetailArea();
     void initMap();
+    void initCardImg();
     void setBackground();
     void sendMessage(int MyCardId,int EnemyCardId);//发送信息
-    QString getCardImg(int category);
+    QPixmap& getCardImg(int category);
 
     void DeleteHandCard(CardWidget* deleteCard, Card *usedCard);
-    void SetHandCardUI(Card* newCard,QString filename);
+    void SetHandCardUI(Card* newCard,QPixmap & img);
     void MyConsumeChangedUI(int hp,int newConsume);
     void DisableEnemyMonster();//无效化敌方怪物
     void DisableMyMonster();//无效化我方怪物
     void EnableAllWidget();//使所有的部件有效化
     void DisableCard();//使卡片无效化
-    void SetEnemyMonsterUI(int id,Card* newCard, QString filename);
+    void SetEnemyMonsterUI(int id,Card* newCard, QPixmap& img);
+    void SetDetailedCard(Card* card,QPixmap & img);
 
     void TurnStart(QDataStream &stream);//回合开始
     void GetNewCard(QDataStream &stream,int category);//向手牌组里添加新卡
