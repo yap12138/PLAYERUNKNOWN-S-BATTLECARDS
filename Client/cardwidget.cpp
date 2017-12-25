@@ -107,7 +107,7 @@ void CardWidget::setOpacity(int level)
 
         this->_attack->setStyleSheet(QStringLiteral("color: rgba(255, 0, 4, 140);"));
         this->_consume->setStyleSheet(QStringLiteral("color: rgba(0, 0, 255, 140);"));
-        this->_weapon->setStyleSheet(QStringLiteral("color: rgba(34, 255, 0, 140);"));
+        this->_weapon->setStyleSheet(QStringLiteral("color: rgba(255, 170, 0, 140);"));
     }
     else
     {
@@ -119,7 +119,7 @@ void CardWidget::setOpacity(int level)
 
         this->_attack->setStyleSheet(QStringLiteral("color: rgb(255, 0, 4);"));
         this->_consume->setStyleSheet(QStringLiteral("color: rgb(0, 0, 255);"));
-        this->_weapon->setStyleSheet(QStringLiteral("color: rgb(34, 255, 0);"));
+        this->_weapon->setStyleSheet(QStringLiteral("color: rgb(255, 170, 0);"));
     }
 
 }
@@ -173,7 +173,7 @@ void CardWidget::setUpUi(int mode)
     this->_attack_bg->setPixmap(QPixmap(":/cardWidget/resoure/img/attack.png"));
     this->_attack_bg->setScaledContents(true);
 
-    this->_weapon_bg->setGeometry(QRect(117*mode,0,30*mode,30*mode));
+    this->_weapon_bg->setGeometry(QRect(110*mode, 0, 40*mode, 40*mode));
     this->_weapon_bg->setPixmap(QPixmap(":/cardWidget/resoure/img/attack.png"));
     this->_weapon_bg->setScaledContents(true);
 
@@ -199,10 +199,13 @@ void CardWidget::setUpUi(int mode)
     this->_attack->setStyleSheet(QStringLiteral("color: rgb(255, 0, 4);"));
     this->_attack->setAlignment(Qt::AlignCenter);
 
-    this->_weapon->setGeometry(QRect(113*mode,0,40*mode,30*mode));
-    this->_weapon->setFont(font);
+    QFont wpfont(font);
+    wpfont.setPointSizeF(9*mode);
+
+    this->_weapon->setGeometry(QRect(110*mode, 4*mode, 40*mode, 30*mode));
+    this->_weapon->setFont(wpfont);
     this->_weapon->setAlignment(Qt::AlignCenter | Qt::AlignTop);
-    this->_weapon->setStyleSheet(QStringLiteral("color: rgb(34, 255, 0);"));
+    this->_weapon->setStyleSheet(QStringLiteral("color: rgb(255, 170, 0);"));
 }
 
 void CardWidget::mousePressEvent(QMouseEvent *event)

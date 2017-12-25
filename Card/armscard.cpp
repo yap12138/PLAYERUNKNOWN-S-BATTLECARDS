@@ -45,17 +45,17 @@ ArmsCard &ArmsCard::operator =(const ArmsCard &other)
 ArmsCard &ArmsCard::operator -(MonsterCard & enemy)
 {
     int a_value,b_value;
-    if (enemy._arms != nullptr)
+    if (enemy._arms != nullptr) //对方怪有武器
     {
-        a_value = this->_attackBuff - enemy._arms->_attackBuff;
-        b_value = enemy._arms->_attackBuff - this->_attackBuff;
+        a_value = this->_attackBuff - enemy._arms->_attackBuff - enemy._attack;
+        b_value = enemy._arms->_attackBuff - this->_attackBuff - this->_owner->_attack;
         this->_attackBuff = a_value;
         enemy._arms->_attackBuff = b_value;
     }
-    else
+    else    //对方怪无武器, 己方武器吸收过量伤害， 敌方承受所有伤害
     {
         a_value = this->_attackBuff - enemy._attack;
-        b_value = enemy._attack - this->_attackBuff;
+        b_value = enemy._attack - this->_attackBuff - this->_owner->_attack;
         this->_attackBuff = a_value;
         enemy._attack = b_value;
     }

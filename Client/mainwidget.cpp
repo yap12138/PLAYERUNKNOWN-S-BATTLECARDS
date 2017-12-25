@@ -18,6 +18,7 @@ Mainwidget::Mainwidget(QWidget *parent) :
     initConnect();
     initMap();
     setBackground();
+    setProfiles();
 }
 
 Mainwidget::~Mainwidget()
@@ -91,7 +92,7 @@ bool Mainwidget::eventFilter(QObject *watched, QEvent *event)
 
 void Mainwidget::initConnect()
 {
-    connect(_client, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    connect(_client, SIGNAL(readyRead()), this, SLOT(onReadyRead()), Qt::QueuedConnection);
     connect(_client, SIGNAL(disconnected()), this, SLOT(onDisconnect()));
     connect(ui->_playCard,SIGNAL(clicked(bool)),this,SLOT(PlayCard()));
     connect(ui->_attackMonster,SIGNAL(clicked(bool)),this,SLOT(AttackMonster()));
@@ -144,30 +145,30 @@ void Mainwidget::initMap()
     this->handMap[4].hasCard = false;
 
     /*
-         * 己方场上怪物位置的map
-         **/
+    * 己方场上怪物位置的map
+    **/
 
-    this->fieldMap[0].x = 450;
+    this->fieldMap[0].x = 360;
     this->fieldMap[0].y = 410;
     this->fieldMap[0].hasCard = false;
 
-    this->fieldMap[1].x = 700;
+    this->fieldMap[1].x = 610;
     this->fieldMap[1].y = 410;
     this->fieldMap[1].hasCard = false;
 
-    this->fieldMap[2].x = 950;
+    this->fieldMap[2].x = 860;
     this->fieldMap[2].y = 410;
     this->fieldMap[2].hasCard = false;
 
-    this->enemyfieldMap[0].x = 450;
+    this->enemyfieldMap[0].x = 360;
     this->enemyfieldMap[0].y = 150;
     this->enemyfieldMap[0].hasCard = false;
 
-    this->enemyfieldMap[1].x = 700;
+    this->enemyfieldMap[1].x = 610;
     this->enemyfieldMap[1].y = 150;
     this->enemyfieldMap[1].hasCard = false;
 
-    this->enemyfieldMap[2].x = 950;
+    this->enemyfieldMap[2].x = 860;
     this->enemyfieldMap[2].y = 150;
     this->enemyfieldMap[2].hasCard = false;
 }
@@ -184,7 +185,7 @@ void Mainwidget::initCardImg()
     this->_cardImg.insert(13, var4);
     QPixmap var5(":/card/resoure/cardres/white_friend.png");
     this->_cardImg.insert(14, var5);
-    QPixmap var6(":/card/resoure/cardres/peashooter.jpg");
+    QPixmap var6(":/card/resoure/cardres/peashooter.png");
     this->_cardImg.insert(15, var6);
 
     QPixmap var7(":/card/resoure/cardres/fire_ball.png");
@@ -231,6 +232,19 @@ void Mainwidget::setBackground()
     }
 }
 
+void Mainwidget::setProfiles()
+{
+    qsrand(time(NULL));
+    int randNum, randNum2;
+    randNum = qrand() % 5;
+    QString prefix1 = QStringLiteral(":/user/profiles/resoure/userPic/") + QString::number(randNum) + QStringLiteral(".jpg");
+    this->ui->_user_photo->setPixmap(QPixmap(prefix1));
+
+    while ((randNum2 = qrand()%5) == randNum);
+    QString prefix2 = QStringLiteral(":/user/profiles/resoure/userPic/") + QString::number(randNum2) + QStringLiteral(".jpg");
+    this->ui->_enemy_photo->setPixmap(QPixmap(prefix2));
+}
+
 //回合开始              得费，发牌
 void Mainwidget::TurnStart(QDataStream &stream)
 {
@@ -249,6 +263,24 @@ void Mainwidget::TurnStart(QDataStream &stream)
     this->ui->label_my_consume->setText(QString::number(this->_me.consume));
     EnableAllBtn();
     EnableAllWidget();
+
+    QRect t (this->ui->_player_turn->pos(), this->ui->_player_turn->size());
+
+    _animation.setPropertyName("geometry");
+    _animation.setTargetObject(this->ui->_player_turn);
+    _animation.setEasingCurve(QEasingCurve::OutInExpo);
+    _animation.setDuration(2000);
+    _animation.setStartValue(t);
+    _animation.setEndValue(QRect(this->ui->_enemy_turn->pos(), this->ui->_enemy_turn->size()));
+    _animation.start();
+
+    QTime dieTime = QTime::currentTime().addMSecs(2050);
+    while (QTime::currentTime() < dieTime && _animation.state() == QAbstractAnimation::Running)
+    {
+        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
+    }
+
+    this->ui->_player_turn->setGeometry(t);
 
     foreach (auto var, this->_me.battleField.keys()){
         dynamic_cast<MonsterCard*>(var)->setHasAttack(false);
@@ -342,6 +374,27 @@ void Mainwidget::TurnEnd()
     this->ui->_numOfCards_e->setText(QString::number(_enemy.oddCards));
 
     this->ui->_battleLog->append(QStringLiteral("敌方: 回合开始"));
+
+    this->ui->_enemy_turn->raise();
+
+    QRect t (this->ui->_enemy_turn->pos(), this->ui->_enemy_turn->size());
+
+    _animation.setPropertyName("geometry");
+    _animation.setTargetObject(this->ui->_enemy_turn);
+    _animation.setEasingCurve(QEasingCurve::OutInExpo);
+    _animation.setDuration(2000);
+    _animation.setStartValue(t);
+    _animation.setEndValue(QRect(this->ui->_player_turn->pos(), this->ui->_player_turn->size()));
+    _animation.start();
+
+    QTime dieTime = QTime::currentTime().addMSecs(2050);
+    while (QTime::currentTime() < dieTime && _animation.state() == QAbstractAnimation::Running)
+    {
+        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
+    }
+
+    this->ui->_enemy_turn->setGeometry(t);
+    this->ui->_enemy_turn->lower();
 }
 
 //出牌
@@ -501,14 +554,18 @@ void Mainwidget::PlayCard()
                             myID = usedCard->getId();
                             QList<int> list = this->_enemy.battleField.keys();
                             if (!list.isEmpty()){//如果列表不为空
+                                QDataStream out(_client);
+                                out<<3;
+                                out<<list.count();
                                 for (int i = 0;i<list.count();i++){
                                     target = list.value(i);
-                                    sendMessage(myID,target);
+                                    out<<target;
 
                                     log_str = QStringLiteral("己方：") + QStringLiteral("使用 ") + usedCard->getName() + QStringLiteral(" 对敌方 ")
                                             + this->_enemy.battleField[target]->_realCard->getName() + QStringLiteral(" 造成4点伤害");
                                     this->ui->_battleLog->append(log_str);
                                 }
+                                _client->flush();
                                 MyConsumeChangedUI(this->_me.hp,newConsume);
                                 //删除手牌卡片UI
                                 //从手牌地图中删除
@@ -574,13 +631,35 @@ void Mainwidget:: GameStart(QDataStream &stream)
     DisableEnemyMonster();
     DisableMyMonster();
     DisableCard();
-    this->_enemy.oddCards -= 4;
+    this->_enemy.oddCards -= 3;
     this->ui->_numOfCards_e->setText(QString::number(_enemy.oddCards));
     //日志
     this->ui->_battleLog->append(QStringLiteral("游戏开始"));
     if (whoToFirst == 1)
     {
         this->ui->_battleLog->append(QStringLiteral("敌方：回合开始"));
+
+        this->ui->_enemy_turn->raise();
+
+        QRect t (this->ui->_enemy_turn->pos(), this->ui->_enemy_turn->size());
+
+        _animation.setPropertyName("geometry");
+        _animation.setTargetObject(this->ui->_enemy_turn);
+        _animation.setEasingCurve(QEasingCurve::OutInExpo);
+        _animation.setDuration(2000);
+        _animation.setStartValue(t);
+        _animation.setEndValue(QRect(this->ui->_player_turn->pos(), this->ui->_player_turn->size()));
+        _animation.start();
+
+        QTime dieTime = QTime::currentTime().addMSecs(2050);
+        while (QTime::currentTime() < dieTime && _animation.state() == QAbstractAnimation::Running)
+        {
+            qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
+        }
+
+        this->ui->_enemy_turn->setGeometry(t);
+        this->ui->_enemy_turn->lower();
+
         this->_enemy.oddCards --;
         this->ui->_numOfCards_e->setText(QString::number(_enemy.oddCards));
     }
@@ -722,6 +801,9 @@ void Mainwidget::EnemyPlayCard(QDataStream &stream)
             //怪攻击
             log_str = log_str + this->_enemy.battleField[cardID]->_realCard->getName() + QStringLiteral(" 攻击 ")
                     + this->_me.battlerID[target]->getName();
+            //动画
+            MoveWidget(this->_enemy.battleField[cardID] , this->_me.battleField[this->_me.battlerID[target]]);
+
             break;
         }
 
@@ -770,16 +852,20 @@ void Mainwidget::ArmsDamaged(QDataStream &stream)
     else
     {
         //@yap
+        MonsterCard * card = dynamic_cast<MonsterCard*>(this->_enemy.battleField[attacker_id]->_realCard);
+
         if(attack>0)
         {
             this->_enemy.battleField[attacker_id]->_weapon->setText(QString::number(attack));
+
+            const_cast<ArmsCard *>(card->getArms())->setAttackBuf(attack);
         }
         else
         {
             this->_enemy.battleField[attacker_id]->_weapon->setText("");
             this->_enemy.battleField[attacker_id]->_weapon_bg->hide();
 
-            MonsterCard * card = dynamic_cast<MonsterCard*>(this->_enemy.battleField[attacker_id]->_realCard);
+
             ArmsCard * ac = const_cast<ArmsCard *>(card->getArms());
             card->removeArms();
             delete ac;
@@ -791,6 +877,7 @@ void Mainwidget::ArmsDamaged(QDataStream &stream)
 //怪物受损              怪id，怪攻击值
 void Mainwidget::MonsterDamaged(QDataStream &stream)
 {
+    qDebug()<<"怪物受损";
     int attacked_id;
     int hp;
     stream>>attacked_id;
@@ -848,7 +935,7 @@ void Mainwidget::MonsterDamaged(QDataStream &stream)
         {
             int damage =  w->_attack->text().toInt()-hp;
             if (damage>0){
-                log_str = log_str + w->_realCard->getName() + QStringLiteral("受到")+QString::number(damage) + QStringLiteral("点伤害 ");
+                log_str = log_str + w->_realCard->getName() + QStringLiteral(" 受到")+QString::number(damage) + QStringLiteral("点伤害 ");
             }
             else {
                 log_str = log_str + w->_realCard->getName() + QStringLiteral(" 增加")+QString::number(-damage) + QStringLiteral("点血量 ");
@@ -889,9 +976,6 @@ void Mainwidget::CreateCard(QDataStream &stream)
 //敌方断开连接 场地清空
 void Mainwidget::Disconnected()
 {
-    initMap();
-    setBackground();
-
     foreach (auto var, this->_me.battleField) {
         Card *c = _me.battleField.key(var);
         _me.battleField.remove(_me.battleField.key(var));
@@ -917,6 +1001,7 @@ void Mainwidget::Disconnected()
     //@yap
     selectCard = nullptr;//指向被选中的部件
     targetCard = nullptr;//指向目标部件
+    lastCard = nullptr;
     ChooseTarget = false;
 
     for(int i = 0; i < 5; i++)
@@ -928,6 +1013,13 @@ void Mainwidget::Disconnected()
     {
         fieldMap[i].hasCard = false;
     }
+
+    delete this->_detailCard;
+    initDetailArea();
+
+    initMap();
+    //setBackground();
+
     _connectUi->show();
     //游戏结束
 }
@@ -948,6 +1040,41 @@ void Mainwidget::EnableAllBtn()
     ui->_playCard->setEnabled(true);
     ui->_cancel->setEnabled(true);
     ui->_turnEnd->setEnabled(true);
+}
+
+void Mainwidget::MoveWidget(CardWidget *selectCard, CardWidget *targetCard)
+{
+    int x1 = selectCard->x();//攻击卡的x坐标
+    int x2 = targetCard->x();//目标卡的x坐标
+    int y1 = selectCard->y();//攻击卡的y坐标
+    int y2 = targetCard->y();//目标卡的y坐标
+    int d = 100;
+    if ( y2 > y1)
+        d = -d;
+
+    _animation.setPropertyName("geometry");
+    _animation.setTargetObject(selectCard);
+    _animation.setDuration(500);
+    _animation.setEasingCurve(QEasingCurve::InQuart);
+    _animation.setStartValue(QRect(x1, y1, 150, 200));
+    _animation.setEndValue(QRect(x2, y2+d, 150, 200));
+    _animation.start();
+
+    QTime dieTime = QTime::currentTime().addMSecs(500);
+    while (QTime::currentTime() < dieTime || _animation.state() == QAbstractAnimation::Running)
+    {
+        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
+    }
+
+    _animation.setStartValue(QRect(x2, y2+d, 150, 200));
+    _animation.setEndValue(QRect(x1, y1, 150, 200));
+    _animation.start();
+
+    QTime dieTime2 = QTime::currentTime().addMSecs(700);
+    while (QTime::currentTime() < dieTime2 || _animation.state() == QAbstractAnimation::Running)
+    {
+        qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
+    }
 }
 
 void Mainwidget::Cancel()
@@ -975,6 +1102,10 @@ void Mainwidget::AttackMonster()
                 target = this->_enemy.battleField.key(this->targetCard);
                 myID = attackCard->getId();
                 sendMessage(myID,target);//发送报文
+
+                //动画
+                MoveWidget(selectCard,targetCard);
+
                 dynamic_cast<MonsterCard*>(attackCard)->setHasAttack(true);
                 ChooseTarget = false;//退出目标选择阶段
                 this->ui->_attackMonster->setText(QStringLiteral("攻击怪兽"));
@@ -983,8 +1114,10 @@ void Mainwidget::AttackMonster()
                 this->selectCard = nullptr;
                 this->targetCard = nullptr;
                 QString log_str = QStringLiteral("己方：");
+                qDebug()<<"2...";
                 log_str = log_str + attackCard->getName() + QStringLiteral(" 对敌方 ")
                         + this->_enemy.battleField[target]->_realCard->getName() + QStringLiteral(" 发动攻击");
+                qDebug()<<"2....,";
                 this->ui->_battleLog->append(log_str);
             }
         }
@@ -1081,8 +1214,22 @@ void Mainwidget::onReadyRead()//准备读取
             GetNewCard(in,category);
             break;
         case 10://游戏结束
+        {
+            int flag;
+            in>>flag;
+            QString str;
+            if (flag == 1)
+            {
+                str = QStringLiteral("恭喜，你赢了这场对局");
+            }
+            else
+            {
+                str = QStringLiteral("抱歉，你输了这场对局");
+            }
+            QMessageBox::information(this, QStringLiteral("结束对局"), str);
             Disconnected();
             break;
+        }
         default:
             break;
         }
@@ -1175,7 +1322,7 @@ void Mainwidget::MyConsumeChangedUI(int hp, int newConsume)
 {
     //改变数据结构的费用
     this->ui->label_my_consume->setText(QString::number(newConsume));
-    this->ui->label_enemy_hp->setText(QString::number(hp));
+    this->ui->label_my_hp->setText(QString::number(hp));
     this->_me.consume = newConsume;
     this->_me.hp = hp;
 }

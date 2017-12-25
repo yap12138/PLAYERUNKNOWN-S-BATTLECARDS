@@ -68,22 +68,24 @@ void MonsterCard::operator +(ArmsCard &arm)
 
 MonsterCard &MonsterCard::operator -(MonsterCard & enemy)
 {
-    if(this->_arms != nullptr)
+    if(this->_arms != nullptr)  //己方有武器
     {
         *this->_arms - enemy;
     }
-    else
+    else    //己方无武器
     {
         int a_value, b_value;
         if ( enemy._arms != nullptr )
         {
-            a_value = this->_attack - enemy._arms->_attackBuff;
+            //对方有武器， 己方攻击-（对方攻击总和）
+            a_value = this->_attack - enemy._arms->_attackBuff - enemy._attack;
             b_value = enemy._arms->_attackBuff - this->_attack;
             this->_attack = a_value;
             enemy._arms->_attackBuff = b_value;
         }
         else
         {
+            //对方无武器
             a_value = this->_attack - enemy._attack;
             b_value = enemy._attack - this->_attack;
             this->_attack = a_value;

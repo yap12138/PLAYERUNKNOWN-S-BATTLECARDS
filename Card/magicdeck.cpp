@@ -4,7 +4,7 @@
 Magic_FireBall::Magic_FireBall()
 {
     *_name = "火球术";
-    *_description = "消耗4法力值，对玩家造成6点伤害";
+    *_description = "消耗4法力值，对怪兽造成6点伤害";
     _skillBuff = -6;
     _consume = 4;
 }
@@ -92,8 +92,8 @@ int Magic_WindStrom::getCategory() const
 Magic_AGiftFromTeacher::Magic_AGiftFromTeacher()
 {
     *_name = "老师的馈赠";
-    *_description = "本回合法力值增加至10，但你的下一个回合法力值将为0";
-    _skillBuff = 10;
+    *_description = "本回合法力值增加5，但你的下一个回合得0点法力值";
+    _skillBuff = 5;
     _consume = 0;
 }
 

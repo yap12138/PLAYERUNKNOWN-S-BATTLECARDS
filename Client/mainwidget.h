@@ -8,6 +8,7 @@
 #include "cardwidget.h"
 #include "connectwidget.h"
 #include "carddeck.h"
+#include <QPropertyAnimation>
 
 namespace Ui {
 class Widget;
@@ -78,12 +79,15 @@ private:
     //@yap
     CardWidget* _detailCard;    //右上详情
 
+    QPropertyAnimation _animation;
+
 private:
     void initConnect();  //初始化界面
     void initDetailArea();
     void initMap();
     void initCardImg();
-    void setBackground();
+    void setBackground();   //设置背景
+    void setProfiles();     //设置对方头像
     void sendMessage(int MyCardId,int EnemyCardId);//发送信息
     QPixmap& getCardImg(int category);
 
@@ -109,6 +113,7 @@ private:
 
     void DisableAllBtn();//无效化除回合结束外的所有按钮
     void EnableAllBtn();//有效化所有按钮
+    void MoveWidget(CardWidget *selectCard,CardWidget *targetCard);
 
 
 private slots:

@@ -124,7 +124,6 @@ void Server::dealSendMagic(Player* p1, Card *srcCard, int descID)
     case 22:    //王者吟唱
         p2 = p1;
     case 20:    //火球
-    case 23:    //风暴
     {
         Card *card = p2->getCard(descID);
         MonsterCard *descCard = dynamic_cast<MonsterCard*> (card);
@@ -160,6 +159,7 @@ void Server::dealSendMagic(Player* p1, Card *srcCard, int descID)
         break;
     }
     //告诉p2，p1扣费了
+    p2 = this->getPlayerFromSocket(&(p1->getSocket()), 1);
     sendMessage(p2, 2);
     sendMessage(p2, 1);
     sendMessage(p2, p1->getHP());
@@ -203,84 +203,123 @@ void Server::doRequest()
         case 0:
             break;
         case 1:
-            {
+        {
 
-                int sourceID, targetID;
-                in >> sourceID;
-                in >> targetID;
-                qDebug()<<"source: "<<sourceID<<" target: "<<targetID;
-                Player* sourcePlayer = this->getPlayerFromSocket(rev, 0);
-                Player* targetPlayer = this->getPlayerFromSocket(rev, 1);
+            int sourceID, targetID;
+            in >> sourceID;
+            in >> targetID;
+            qDebug()<<"source: "<<sourceID<<" target: "<<targetID;
+            Player* sourcePlayer = this->getPlayerFromSocket(rev, 0);
+            Player* targetPlayer = this->getPlayerFromSocket(rev, 1);
 
-                Card* sourceCard = sourcePlayer->getCard(sourceID);
-                this->enemySendCard(rev, sourceID, targetID, sourceCard);   //告诉对方出牌了
+            Card* sourceCard = sourcePlayer->getCard(sourceID);
+            this->enemySendCard(rev, sourceID, targetID, sourceCard);   //告诉对方出牌了
 
-                if (sourcePlayer->isMyCard(targetID)) targetPlayer = sourcePlayer;  //判断是否对自己的怪物使用卡牌, 是则从自己卡组寻找卡牌
-                if (targetID == -2) {
+            if (sourcePlayer->isMyCard(targetID)) targetPlayer = sourcePlayer;  //判断是否对自己的怪物使用卡牌, 是则从自己卡组寻找卡牌
+            if (targetID == -2) {
 
-                    //怪物上场，减少使用者法力值
-                    sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());
+                //怪物上场，减少使用者法力值
+                sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());
 
-                    //告诉对手自己所上场的怪物
-    //                sendMessage(targetPlayer, 3);
-    //                sendMessage(targetPlayer, sourceCard->getCategory());
-    //                sendMessage(targetPlayer, sourceCard->getId());
-    //                sendMessage(targetPlayer, -2);
-    //                targetPlayer->getSocket().flush();
+                //告诉对手自己所上场的怪物
+                //                sendMessage(targetPlayer, 3);
+                //                sendMessage(targetPlayer, sourceCard->getCategory());
+                //                sendMessage(targetPlayer, sourceCard->getId());
+                //                sendMessage(targetPlayer, -2);
+                //                targetPlayer->getSocket().flush();
 
-                    //告诉对手更新自己的血和法力值信息
-                    sendMessage(targetPlayer, 2);
-                    sendMessage(targetPlayer, 1);
-                    sendMessage(targetPlayer, sourcePlayer->getHP());
-                    sendMessage(targetPlayer, sourcePlayer->getConsume());
-                    targetPlayer->getSocket().flush();
+                //告诉对手更新自己的血和法力值信息
+                sendMessage(targetPlayer, 2);
+                sendMessage(targetPlayer, 1);
+                sendMessage(targetPlayer, sourcePlayer->getHP());
+                sendMessage(targetPlayer, sourcePlayer->getConsume());
+                targetPlayer->getSocket().flush();
 
-                    break;
-                }
-
-
-                //出牌信息转发
-    //            sendMessage(targetPlayer, 3);
-    //            sendMessage(targetPlayer, sourceCard->getCategory());
-    //            sendMessage(targetPlayer, sourceCard->getId());
-    //            sendMessage(targetPlayer, targetCard->getId());
-    //            targetPlayer->getSocket().flush();
-
-                if (targetID == -1){
-                    qDebug()<<"attack people";
-                    monsterAttack(sourceCard, targetPlayer, sourcePlayer, targetPlayer); //怪物对人
-                }
-                else if (sourceCard->getCategory() < 20){
-                    qDebug()<<"attack monster";
-                    Card* targetCard = targetPlayer->getCard(targetID);
-                    monsterAttack(sourceCard, targetCard, sourcePlayer, targetPlayer); //怪物对怪物
-                }
-                else if (sourceCard->getCategory() < 30){
-                    //魔法对怪
-                    dealSendMagic(sourcePlayer, sourceCard, targetID);
-                }
-                else if (sourceCard->getCategory() < 40){
-                    Card* targetCard = targetPlayer->getCard(targetID);
-
-                    sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());    //出装备卡扣费
-
-                    //将targetPlayer设置回来
-                    targetPlayer = getPlayerFromSocket(rev, 1);
-
-                    //告诉对手更新自己的信息
-                    sendMessage(targetPlayer, 2);
-                    sendMessage(targetPlayer, 1);
-                    sendMessage(targetPlayer, sourcePlayer->getHP());
-                    sendMessage(targetPlayer, sourcePlayer->getConsume());
-                    targetPlayer->getSocket().flush();
-
-                    addArms(sourceCard, targetCard, sourcePlayer, targetPlayer);    //怪物装备武器
-                }
                 break;
             }
+
+
+            //出牌信息转发
+            //            sendMessage(targetPlayer, 3);
+            //            sendMessage(targetPlayer, sourceCard->getCategory());
+            //            sendMessage(targetPlayer, sourceCard->getId());
+            //            sendMessage(targetPlayer, targetCard->getId());
+            //            targetPlayer->getSocket().flush();
+
+            if (targetID == -1){
+                qDebug()<<"attack people";
+                monsterAttack(sourceCard, targetPlayer, sourcePlayer, targetPlayer); //怪物对人
+            }
+            else if (sourceCard->getCategory() < 20){
+                qDebug()<<"attack monster";
+                Card* targetCard = targetPlayer->getCard(targetID);
+                monsterAttack(sourceCard, targetCard, sourcePlayer, targetPlayer); //怪物对怪物
+            }
+            else if (sourceCard->getCategory() < 30){
+                //魔法对怪
+                dealSendMagic(sourcePlayer, sourceCard, targetID);
+            }
+            else if (sourceCard->getCategory() < 40){
+                Card* targetCard = targetPlayer->getCard(targetID);
+
+                sourcePlayer->setConsume(sourcePlayer->getConsume() - sourceCard->getConsume());    //出装备卡扣费
+
+                //将targetPlayer设置回来
+                targetPlayer = getPlayerFromSocket(rev, 1);
+
+                //告诉对手更新自己的信息
+                sendMessage(targetPlayer, 2);
+                sendMessage(targetPlayer, 1);
+                sendMessage(targetPlayer, sourcePlayer->getHP());
+                sendMessage(targetPlayer, sourcePlayer->getConsume());
+                targetPlayer->getSocket().flush();
+
+                addArms(sourceCard, targetCard, sourcePlayer, targetPlayer);    //怪物装备武器
+            }
+            break;
+        }
         case 2:
             doTurnStart();
             break;
+        case 3:     //风暴
+        {
+            MagicCard* srcMagic = new Magic_WindStrom();
+
+            Player* p1 = this->getPlayerFromSocket(rev, 0);
+            Player* p2 = this->getPlayerFromSocket(rev, 1);
+
+            //p1扣费
+            p1->setConsume(p1->getConsume() - srcMagic->getConsume());
+
+            int count,descID;
+            in>>count;
+            for (int i = 0; i < count; i++)
+            {
+                in>>descID;
+                Card *card = p2->getCard(descID);
+                MonsterCard *descCard = dynamic_cast<MonsterCard*> (card);
+
+                descCard->setAttack(descCard->getAttack() + srcMagic->getSkillBuff());
+                //给双方发送改变怪状态报文
+                sendMessage(p1, 5);
+                sendMessage(p1, descID);
+                sendMessage(p1, descCard->getAttack());
+                p1->getSocket().flush();
+
+                sendMessage(p2, 5);
+                sendMessage(p2, descID);
+                sendMessage(p2, descCard->getAttack());
+                p2->getSocket().flush();
+            }
+            //告诉p2，p1扣费了
+            sendMessage(p2, 2);
+            sendMessage(p2, 1);
+            sendMessage(p2, p1->getHP());
+            sendMessage(p2, p1->getConsume());
+            p2->getSocket().flush();
+
+            break;
+        }
         default:
             qDebug()<<"error code: "<<msgCategory;
             break;
@@ -371,7 +410,15 @@ void Server::monsterAttack(Card* source, Card* target, Player* sourcePlayer, Pla
 
 //怪物对人攻击
 void Server::monsterAttack(Card* source, Player* target, Player* sourcePlayer, Player* targetPlayer){
-    target->setHP(target->getHP() - dynamic_cast<MonsterCard* >(source)->getAttack());
+    MonsterCard * mc = dynamic_cast<MonsterCard* >(source);
+    target->setHP(target->getHP() - mc->getAttack());
+    //如果有武器则再扣武器伤害 emmm先不吧，有个combo很op，还是不扣了
+//    if(mc->getArms() != nullptr)
+//    {
+//        target->setHP(target->getHP() - mc->getArms()->getAttackBuf());
+//    }
+
+
     sendMessage(sourcePlayer, 2);
     sendMessage(sourcePlayer, 1);
     sendMessage(sourcePlayer, targetPlayer->getHP());

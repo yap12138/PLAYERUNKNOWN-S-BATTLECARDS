@@ -13,7 +13,7 @@ ConnectWidget::ConnectWidget(QTcpSocket *client, QWidget *parent) :
     ui->setupUi(this);
 
     //@yap
-    ui->_ip_input->setText(QStringLiteral("127.0.0.1"));
+    ui->_ip_input->setText(QStringLiteral("192.168.43.140"));
 
     connect(ui->_conn_btn, SIGNAL(clicked(bool)), this, SLOT(tryToConnect()));
 }
@@ -50,6 +50,7 @@ void ConnectWidget::tryToConnect()
 
     if ( !_client->waitForConnected(10000) )
     {
+        QMessageBox::warning(this, QStringLiteral("错误"), QStringLiteral("无法连接到服务器"));
         return;
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
