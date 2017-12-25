@@ -78,6 +78,7 @@ private:
 
 private:
     void initConnect();  //初始化界面
+    void initDetailArea();
     void initMap();
     void setBackground();
     void sendMessage(int MyCardId,int EnemyCardId);//发送信息
@@ -91,7 +92,6 @@ private:
     void EnableAllWidget();//使所有的部件有效化
     void DisableCard();//使卡片无效化
     void SetEnemyMonsterUI(int id,Card* newCard, QString filename);
-    void SetDetailedCard(Card* card,QString filename);
 
     void TurnStart(QDataStream &stream);//回合开始
     void GetNewCard(QDataStream &stream,int category);//向手牌组里添加新卡
@@ -117,6 +117,8 @@ private slots:
     void TurnEnd();//发送回合结束的报文
     //信息处理
     void onReadyRead();//准备读取
+    //@yap 与服务器断开连接
+    void onDisconnect();
 };
 
 #endif // WIDGET_H

@@ -1,1 +1,4 @@
-exe目录需要放Card.dll
+exe鎵�鍦ㄧ洰褰曢渶瑕佹斁Card.dll
+
+12/25@yap
+鐣岄潰澶勭悊瀹屽杽

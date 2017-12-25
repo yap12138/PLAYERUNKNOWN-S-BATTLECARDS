@@ -1,6 +1,7 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 #include <QDebug>
+#include <QMessageBox>
 
 Mainwidget::Mainwidget(QWidget *parent) :
     QWidget(parent),
@@ -8,19 +9,7 @@ Mainwidget::Mainwidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _detailCard = new CardWidget(this,2);
-    _detailCard->setGeometry(1280,0,_detailCard->width(),_detailCard->height());
-    // 设置卡详情背景半透明
-    QPalette myPalette;
-    QColor myColor(255,255,255);
-    myColor.setAlphaF(0.3);
-    myPalette.setBrush(backgroundRole(),myColor);
-    _detailCard->setPalette(myPalette);
-    _detailCard->setAutoFillBackground(true);
-    this->ui->_detailName->setPalette(myPalette);
-    this->ui->_detailName->setAutoFillBackground(true);
-    this->ui->_detailDescription->setPalette(myPalette);
-    this->ui->_detailDescription->setAutoFillBackground(true);
+    initDetailArea();
 
     _client = new QTcpSocket(this);
     _connectUi = new ConnectWidget(_client,this);
@@ -68,6 +57,7 @@ bool Mainwidget::eventFilter(QObject *watched, QEvent *event)
                 {
                     this->_detailCard->_weapon_bg->show();  //有武器则将武器栏显示出来
                     this->_detailCard->_weapon->setText(QString::number(t1->getArms()->getAttackBuf()));
+                    ui->_detailName->setText(ui->_detailName->text() + QStringLiteral(" (装备：") + t1->getArms()->getName() + QStringLiteral(" )"));
                 }
             }
             else
@@ -101,11 +91,30 @@ bool Mainwidget::eventFilter(QObject *watched, QEvent *event)
 void Mainwidget::initConnect()
 {
     connect(_client, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    connect(_client, SIGNAL(disconnected()), this, SLOT(onDisconnect()));
     connect(ui->_playCard,SIGNAL(clicked(bool)),this,SLOT(PlayCard()));
     connect(ui->_attackMonster,SIGNAL(clicked(bool)),this,SLOT(AttackMonster()));
     connect(ui->_attackPlayer,SIGNAL(clicked(bool)),this,SLOT(AttackPlayer()));
     connect(ui->_turnEnd,SIGNAL(clicked(bool)),this,SLOT(TurnEnd()));
     connect(ui->_cancel,SIGNAL(clicked(bool)),this,SLOT(Cancel()));
+}
+
+void Mainwidget::initDetailArea()
+{
+    _detailCard = new CardWidget(this,2);
+    _detailCard->setGeometry(1280,0,_detailCard->width(),_detailCard->height());
+    // 设置卡详情背景半透明
+    QPalette myPalette;
+    QColor myColor(255,255,255);
+    myColor.setAlphaF(0.3);
+    myPalette.setBrush(backgroundRole(),myColor);
+    _detailCard->setPalette(myPalette);
+    _detailCard->setAutoFillBackground(true);
+    _detailCard->setCursor(Qt::ArrowCursor);
+    this->ui->_detailName->setPalette(myPalette);
+    this->ui->_detailName->setAutoFillBackground(true);
+    this->ui->_detailDescription->setPalette(myPalette);
+    this->ui->_detailDescription->setAutoFillBackground(true);
 }
 
 void Mainwidget::initMap()
@@ -388,6 +397,7 @@ void Mainwidget::PlayCard()
                                 break;
                             }
                         }
+                        newCardWidget->setImage(QPixmap(getCardImg(newMonster->getCategory())));
                         //设置怪兽的HP
                         newCardWidget->_attack->setText(QString::number(newMonster->getAttack()));
                         newCardWidget->show(1);
@@ -608,44 +618,44 @@ void Mainwidget::EnemyPlayCard(QDataStream &stream)
             m = new Magic_FireBall();
 
             //@yap 以下都注释了
-            //SetDetailedCard(m,filename);
-            break;
-        case 21:
-            m = new Magic_WakeUp();
-            //SetDetailedCard(m,filename);
-            break;
-        case 22:
-            m = new Magic_KingSpell();
-            //SetDetailedCard(m,filename);
-            break;
-        case 23:
-            m = new Magic_WindStrom();
-            //SetDetailedCard(m,filename);
-            break;
-        case 24:
-            m = new Magic_AGiftFromTeacher();
-            //SetDetailedCard(m,filename);
-            break;
-        case 31:
-            m = new Arms_98K();
-            //SetDetailedCard(m,filename);
-            break;
-        case 32:
-            m = new Arms_InfinityEdge();
-            //SetDetailedCard(m,filename);
-            break;
-        case 33:
-            m = new Arms_ArchangelSword();
-            //SetDetailedCard(m,filename);
-            break;
-        case 34:
-            m = new Arms_DeathfireStaff();
-            //SetDetailedCard(m,filename);
-            break;
-        case 35:
-            m = new Arms_Nokia();
-            //SetDetailedCard(m,filename);
-            break;
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 21:
+//            m = new Magic_WakeUp();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 22:
+//            m = new Magic_KingSpell();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 23:
+//            m = new Magic_WindStrom();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 24:
+//            m = new Magic_AGiftFromTeacher();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 31:
+//            m = new Arms_98K();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 32:
+//            m = new Arms_InfinityEdge();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 33:
+//            m = new Arms_ArchangelSword();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 34:
+//            m = new Arms_DeathfireStaff();
+//            //SetDetailedCard(m,filename);
+//            break;
+//        case 35:
+//            m = new Arms_Nokia();
+//            //SetDetailedCard(m,filename);
+//            break;
         default:
             break;
         }
@@ -718,12 +728,16 @@ void Mainwidget::EnemyPlayCard(QDataStream &stream)
                     + this->_me.battlerID[target]->getName();
             break;
         }
-        if(m != nullptr)
-            delete m;
+
         if ( category >= 30)
         {
             this->_enemy.battleField[target]->_weapon_bg->show();
+            MonsterCard* mc = dynamic_cast<MonsterCard *>(this->_enemy.battleField[target]->_realCard);
+            ArmsCard* ac = dynamic_cast<ArmsCard *>(m);
+            *mc + *ac;
         }
+        else if (m != nullptr)  //如果不是装备牌那就delete掉
+            delete m;
     }
     this->ui->_battleLog->append(log_str);
 }
@@ -749,7 +763,9 @@ void Mainwidget::ArmsDamaged(QDataStream &stream)
             this->_me.battleField[card]->_weapon->setText("");
             this->_me.battleField[card]->_weapon_bg->hide();
             //@yap 卸载武器
+            ArmsCard * ac = const_cast<ArmsCard *>(card->getArms());
             card->removeArms();
+            delete ac;
         }
     }
     else
@@ -763,6 +779,11 @@ void Mainwidget::ArmsDamaged(QDataStream &stream)
         {
             this->_enemy.battleField[attacker_id]->_weapon->setText("");
             this->_enemy.battleField[attacker_id]->_weapon_bg->hide();
+
+            MonsterCard * card = dynamic_cast<MonsterCard*>(this->_enemy.battleField[attacker_id]->_realCard);
+            ArmsCard * ac = const_cast<ArmsCard *>(card->getArms());
+            card->removeArms();
+            delete ac;
         }
     }
 
@@ -799,7 +820,7 @@ void Mainwidget::MonsterDamaged(QDataStream &stream)
         {
 
             Card *c = this->_me.battlerID[attacked_id];
-             log_str = log_str + c->getName() + QStringLiteral(" 死亡");
+            log_str = log_str + c->getName() + QStringLiteral(" 死亡");
             qDebug()<<c->getName();
             CardWidget *w = this->_me.battleField[c];
             this->_me.battleField.remove(c);
@@ -831,8 +852,10 @@ void Mainwidget::MonsterDamaged(QDataStream &stream)
                 log_str = log_str + w->_realCard->getName() + QStringLiteral("受到")+QString::number(damage) + QStringLiteral("点伤害 ");
             }
             else {
-                log_str = log_str + w->_realCard->getName() + QStringLiteral(" 增加")+QString::number(damage) + QStringLiteral("点血量 ");
+                log_str = log_str + w->_realCard->getName() + QStringLiteral(" 增加")+QString::number(-damage) + QStringLiteral("点血量 ");
             }
+            //@yap 给对方怪兽卡设置新攻击
+            dynamic_cast<MonsterCard *>(w->_realCard)->setAttack(hp);
             w->_attack->setText(QString::number(hp));
         }
         else
@@ -1071,6 +1094,12 @@ void Mainwidget::onReadyRead()//准备读取
 
 }
 
+void Mainwidget::onDisconnect()
+{
+    QMessageBox::information(this, QStringLiteral("断开连接"), QStringLiteral("与服务器断开连接, 游戏即将关闭"));
+    qApp->exit();
+}
+
 void Mainwidget::sendMessage(int MyCardId, int EnemyCardId)//发送信息
 {
     QDataStream out(_client);
@@ -1257,11 +1286,4 @@ void Mainwidget::SetEnemyMonsterUI(int id, Card *newCard, QString filename)
         newCardWidget->show(1);//显示部件
         connect(newCardWidget,SIGNAL(SMyPointer(CardWidget*)),this,SLOT(OnWidgetClicked(CardWidget*)));
     }
-}
-
-//@yap
-void Mainwidget::SetDetailedCard(Card *card, QString filename)
-{
-    //    this->detailCard->setImage(QPixmap(filename));
-    //this->ui->detailLabel->setText(card->getDescription());
 }
