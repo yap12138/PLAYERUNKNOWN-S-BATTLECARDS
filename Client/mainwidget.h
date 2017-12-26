@@ -82,10 +82,11 @@ private:
     QPropertyAnimation _animation;
 
 private:
-    void initConnect();  //初始化界面
+    void initConnect();     //初始化界面
     void initDetailArea();
     void initMap();
     void initCardImg();
+    void initStyleSheet();  //设置样式表
     void setBackground();   //设置背景
     void setProfiles();     //设置对方头像
     void sendMessage(int MyCardId,int EnemyCardId);//发送信息
@@ -108,7 +109,8 @@ private:
     void EnemyPlayCard(QDataStream &stream);//对方出牌
     void ArmsDamaged(QDataStream &stream);//武器受损
     void MonsterDamaged(QDataStream &stream);//怪物受损
-    void CreateCard(QDataStream &stream);//初始发牌
+    void CreateCard(QDataStream &stream);//发牌
+    void EnemySendMsg(QDataStream &stream);//对方说话
     void Disconnected();//敌方断开连接 场地清空
 
     void DisableAllBtn();//无效化除回合结束外的所有按钮
@@ -124,6 +126,7 @@ private slots:
     void OnWidgetClicked(CardWidget*widget);
     void PlayCard();//出牌的相关操作
     void TurnEnd();//发送回合结束的报文
+    void SendChatMsg();
     //信息处理
     void onReadyRead();//准备读取
     //@yap 与服务器断开连接

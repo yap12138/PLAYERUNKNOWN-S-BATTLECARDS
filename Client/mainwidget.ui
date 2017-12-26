@@ -219,11 +219,7 @@
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(255, 170, 127);
-border:2px groove gray;
-border-radius:10px;
-padding:2px 4px;
-background-color: rgb(170, 85, 0);</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>出牌</string>
@@ -310,11 +306,7 @@ background-color: rgb(170, 85, 0);</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(255, 170, 127);
-border:2px groove gray;
-border-radius:10px;
-padding:2px 4px;
-background-color: rgb(255, 49, 49);</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>回合结束</string>
@@ -644,11 +636,7 @@ background-color: rgb(255, 49, 49);</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(255, 170, 127);
-border:2px groove gray;
-border-radius:10px;
-padding:2px 4px;
-background-color: rgb(170, 85, 0);</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>攻击玩家</string>
@@ -662,13 +650,6 @@ background-color: rgb(170, 85, 0);</string>
      <width>80</width>
      <height>30</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">color: rgb(255, 170, 127);
-border:2px groove gray;
-border-radius:10px;
-padding:2px 4px;
-background-color: rgb(170, 85, 0);</string>
    </property>
    <property name="text">
     <string>攻击怪兽</string>
@@ -727,7 +708,7 @@ background-color: rgb(170, 85, 0);</string>
      <x>1280</x>
      <y>550</y>
      <width>300</width>
-     <height>300</height>
+     <height>260</height>
     </rect>
    </property>
   </widget>
@@ -741,11 +722,7 @@ background-color: rgb(170, 85, 0);</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: rgb(255, 170, 127);
-border:2px groove gray;
-border-radius:10px;
-padding:2px 4px;
-background-color: rgb(170, 85, 0);</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string>取消</string>
@@ -841,6 +818,19 @@ color: rgb(255, 170, 0);</string>
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
+  <widget class="QLineEdit" name="_chat_editor">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>815</y>
+     <width>300</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="placeholderText">
+    <string>聊天框</string>
+   </property>
+  </widget>
   <zorder>_enemy_turn</zorder>
   <zorder>_backgroud</zorder>
   <zorder>_cardsLast</zorder>
@@ -874,6 +864,7 @@ color: rgb(255, 170, 0);</string>
   <zorder>line_2</zorder>
   <zorder>_detailName</zorder>
   <zorder>_detailDescription</zorder>
+  <zorder>_chat_editor</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

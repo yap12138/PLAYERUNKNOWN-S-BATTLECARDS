@@ -17,6 +17,7 @@ Mainwidget::Mainwidget(QWidget *parent) :
     //@yap
     initConnect();
     initMap();
+    initStyleSheet();
     setBackground();
     setProfiles();
 }
@@ -99,6 +100,8 @@ void Mainwidget::initConnect()
     connect(ui->_attackPlayer,SIGNAL(clicked(bool)),this,SLOT(AttackPlayer()));
     connect(ui->_turnEnd,SIGNAL(clicked(bool)),this,SLOT(TurnEnd()));
     connect(ui->_cancel,SIGNAL(clicked(bool)),this,SLOT(Cancel()));
+
+    connect(ui->_chat_editor, SIGNAL(returnPressed()), this, SLOT(SendChatMsg()));
 }
 
 void Mainwidget::initDetailArea()
@@ -211,6 +214,31 @@ void Mainwidget::initCardImg()
     this->_cardImg.insert(35, var16);
 }
 
+void Mainwidget::initStyleSheet()
+{
+    //background-color: rgb(130, 130, 130)
+
+    this->ui->_turnEnd->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(255, 49, 49)}"
+                                        "QPushButton:hover { background-color:rgba(100,255,100, 100); border-color: rgba(255, 225, 255, 200); color:rgba(0, 0, 0, 200)}"
+                                        "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
+
+    this->ui->_playCard->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(170, 85, 0)}"
+                                        "QPushButton:hover { background-color:rgba(100,255,100, 100); border-color: rgba(255, 225, 255, 200); color:rgba(0, 0, 0, 200)}"
+                                        "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
+
+    this->ui->_attackPlayer->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(170, 85, 0)}"
+                                            "QPushButton:hover { background-color:rgba(100,255,100, 100); border-color: rgba(255, 225, 255, 200); color:rgba(0, 0, 0, 200)}"
+                                            "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
+
+    this->ui->_attackMonster->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(170, 85, 0)}"
+                                             "QPushButton:hover { background-color:rgba(100,255,100, 100); border-color: rgba(255, 225, 255, 200); color:rgba(0, 0, 0, 200)}"
+                                             "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
+
+    this->ui->_cancel->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(135, 135, 135)}"
+                                        "QPushButton:hover { background-color:rgba(100,255,100, 100); border-color: rgba(255, 225, 255, 200); color:rgba(0, 0, 0, 200)}"
+                                        "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
+}
+
 void Mainwidget::setBackground()
 {
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
@@ -275,7 +303,7 @@ void Mainwidget::TurnStart(QDataStream &stream)
     _animation.start();
 
     QTime dieTime = QTime::currentTime().addMSecs(2050);
-    while (QTime::currentTime() < dieTime && _animation.state() == QAbstractAnimation::Running)
+    while (QTime::currentTime() < dieTime || _animation.state() == QAbstractAnimation::Running)
     {
         qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
     }
@@ -288,6 +316,11 @@ void Mainwidget::TurnStart(QDataStream &stream)
 
     //@yap 日志
     this->ui->_battleLog->append(QStringLiteral("己方：回合开始"));
+
+    //样式表
+    this->ui->_turnEnd->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(255, 49, 49)}"
+                                        "QPushButton:hover { background-color:rgba(100,255,100, 100); border-color: rgba(255, 225, 255, 200); color:rgba(0, 0, 0, 200)}"
+                                        "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
 }
 
 //向手牌组里添加新卡
@@ -388,13 +421,30 @@ void Mainwidget::TurnEnd()
     _animation.start();
 
     QTime dieTime = QTime::currentTime().addMSecs(2050);
-    while (QTime::currentTime() < dieTime && _animation.state() == QAbstractAnimation::Running)
+    while (QTime::currentTime() < dieTime || _animation.state() == QAbstractAnimation::Running)
     {
         qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
     }
 
     this->ui->_enemy_turn->setGeometry(t);
     this->ui->_enemy_turn->lower();
+
+    //样式表
+    this->ui->_turnEnd->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(130, 130, 130)}");
+}
+
+void Mainwidget::SendChatMsg()
+{
+    QString msg = this->ui->_chat_editor->text();
+    if (msg == "")
+        return;
+    this->ui->_chat_editor->clear();
+    this->ui->_battleLog->append(this->_me.name + QStringLiteral(": ") + msg);
+    QDataStream out(_client);
+    out.setVersion(QDataStream::Qt_5_9);
+    out<<4;
+    out<<msg;
+    _client->flush();
 }
 
 //出牌
@@ -629,6 +679,10 @@ void Mainwidget:: GameStart(QDataStream &stream)
     {
         this->ui->_battleLog->append(QStringLiteral("敌方：回合开始"));
 
+        //样式表
+        this->ui->_turnEnd->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(130, 130, 130)}");
+
+
         this->ui->_enemy_turn->raise();
 
         QRect t (this->ui->_enemy_turn->pos(), this->ui->_enemy_turn->size());
@@ -642,7 +696,7 @@ void Mainwidget:: GameStart(QDataStream &stream)
         _animation.start();
 
         QTime dieTime = QTime::currentTime().addMSecs(2050);
-        while (QTime::currentTime() < dieTime && _animation.state() == QAbstractAnimation::Running)
+        while (QTime::currentTime() < dieTime || _animation.state() == QAbstractAnimation::Running)
         {
             qApp->processEvents(QEventLoop::ExcludeSocketNotifiers, 100);
         }
@@ -960,6 +1014,13 @@ void Mainwidget::CreateCard(QDataStream &stream)
     GetNewCard(stream,category);
 }
 
+void Mainwidget::EnemySendMsg(QDataStream &stream)
+{
+    QString msg;
+    stream>>msg;
+    this->ui->_battleLog->append(this->_enemy.name + QStringLiteral(": ") + msg);
+}
+
 //敌方断开连接 场地清空
 void Mainwidget::Disconnected()
 {
@@ -1067,7 +1128,7 @@ void Mainwidget::MoveWidget(CardWidget *selectCard, CardWidget *targetCard)
 void Mainwidget::Cancel()
 {
     EnableAllWidget();
-    this->selectCard = nullptr;
+    //this->selectCard = nullptr;
     this->targetCard = nullptr;
     ChooseTarget = false;
     EnableAllBtn();
@@ -1174,6 +1235,9 @@ void Mainwidget::onReadyRead()//准备读取
             break;
         case 6: //初始发牌              出牌顺序，QList
             CreateCard(in);
+            break;
+        case 7:
+            EnemySendMsg(in);
             break;
         case 8: //敌方断开
             Disconnected();

@@ -312,6 +312,16 @@ void Server::doRequest()
 
             break;
         }
+        case 4:
+        {
+            QString msg;
+            in>>msg;
+            Player * p2 = getPlayerFromSocket(rev, 1);
+            sendMessage(p2, 7);
+            sendMessage(p2, msg);
+            p2->getSocket().flush();
+            break;
+        }
         default:
             qDebug()<<"error code: "<<msgCategory;
             break;
