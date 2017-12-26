@@ -15,9 +15,9 @@ ServerBootstrap::ServerBootstrap(QWidget *parent) :
     this->_model->setHeaderData(2,Qt::Horizontal,QStringLiteral("卡牌名字"));
     ui->tableView->setModel(this->_model);
 
-    ui->tableView->setColumnWidth(0,168);
+    ui->tableView->setColumnWidth(0,200);
     ui->tableView->setColumnWidth(1,80);
-    ui->tableView->setColumnWidth(2,160);
+    ui->tableView->setColumnWidth(2,180);
 
     initServer();
     initConnect();

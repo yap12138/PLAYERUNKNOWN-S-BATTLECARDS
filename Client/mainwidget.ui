@@ -218,6 +218,13 @@
      <height>30</height>
     </size>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 170, 127);
+border:2px groove gray;
+border-radius:10px;
+padding:2px 4px;
+background-color: rgb(170, 85, 0);</string>
+   </property>
    <property name="text">
     <string>出牌</string>
    </property>
@@ -301,6 +308,13 @@
      <width>80</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 170, 127);
+border:2px groove gray;
+border-radius:10px;
+padding:2px 4px;
+background-color: rgb(255, 49, 49);</string>
    </property>
    <property name="text">
     <string>回合结束</string>
@@ -629,6 +643,13 @@
      <height>30</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 170, 127);
+border:2px groove gray;
+border-radius:10px;
+padding:2px 4px;
+background-color: rgb(170, 85, 0);</string>
+   </property>
    <property name="text">
     <string>攻击玩家</string>
    </property>
@@ -641,6 +662,13 @@
      <width>80</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 170, 127);
+border:2px groove gray;
+border-radius:10px;
+padding:2px 4px;
+background-color: rgb(170, 85, 0);</string>
    </property>
    <property name="text">
     <string>攻击怪兽</string>
@@ -711,6 +739,13 @@
      <width>80</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 170, 127);
+border:2px groove gray;
+border-radius:10px;
+padding:2px 4px;
+background-color: rgb(170, 85, 0);</string>
    </property>
    <property name="text">
     <string>取消</string>

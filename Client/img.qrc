@@ -9,6 +9,7 @@
         <file>resoure/img/bg3.jpg</file>
         <file>resoure/img/bg1.jpg</file>
         <file>resoure/img/bg2.jpg</file>
+        <file>resoure/img/connect_bg.png</file>
     </qresource>
     <qresource prefix="/card">
         <file>resoure/cardres/crazy_cow.png</file>
@@ -22,6 +23,11 @@
         <file>resoure/cardres/white_friend.png</file>
         <file>resoure/cardres/wind_storm.jpg</file>
         <file>resoure/cardres/peashooter.png</file>
+        <file>resoure/cardres/archangel_sword.jpg</file>
+        <file>resoure/cardres/infinity_edge.png</file>
+        <file>resoure/cardres/kar_98k.png</file>
+        <file>resoure/cardres/Nokia.png</file>
+        <file>resoure/cardres/deathfire_staff.png</file>
     </qresource>
     <qresource prefix="/user/profiles">
         <file>resoure/userPic/0.jpg</file>

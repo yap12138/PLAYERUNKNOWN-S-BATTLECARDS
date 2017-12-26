@@ -5,7 +5,6 @@
 #include <QWidget>
 #include <QLabel>
 #include <QPixmap>
-//#include "mainwidget.h"
 
 namespace Ui {
 class CardWidget;

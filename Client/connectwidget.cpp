@@ -13,7 +13,7 @@ ConnectWidget::ConnectWidget(QTcpSocket *client, QWidget *parent) :
     ui->setupUi(this);
 
     //@yap
-    ui->_ip_input->setText(QStringLiteral("192.168.43.140"));
+//    ui->_ip_input->setText(QStringLiteral("172.16.31.9"));
 
     connect(ui->_conn_btn, SIGNAL(clicked(bool)), this, SLOT(tryToConnect()));
 }
@@ -25,7 +25,7 @@ ConnectWidget::~ConnectWidget()
 
 QString ConnectWidget::getName()
 {
-    return ui->_username_input->toPlainText();
+    return ui->_username_input->text();
 }
 
 //@yap
@@ -45,7 +45,7 @@ void ConnectWidget::tryToConnect()
         return;
     }
 
-    QHostAddress *Address = new QHostAddress(ui->_ip_input->toPlainText());
+    QHostAddress *Address = new QHostAddress(ui->_ip_input->text());
     _client->connectToHost(*Address,5000);
 
     if ( !_client->waitForConnected(10000) )
@@ -57,7 +57,7 @@ void ConnectWidget::tryToConnect()
 
     QDataStream s(_client);
     s<<0;
-    s<<ui->_username_input->toPlainText();
+    s<<ui->_username_input->text();
     _client->flush();
 }
 

@@ -42,7 +42,6 @@ void CardWidget::setImage(const QPixmap &var_img)
 {
     if (&var_img == 0)
     {
-        qDebug()<<"null pixmap";
         return;
     }
     QPixmap img = var_img.scaled(_card->size(), Qt::KeepAspectRatio);
@@ -87,16 +86,6 @@ void CardWidget::show(int mode)
  */
 void CardWidget::setOpacity(int level)
 {
-//    this->_card_bg->setWindowOpacity(level);
-//    this->_consume_bg->setWindowOpacity(level);
-//    this->_attack_bg->setWindowOpacity(level);
-//    this->_weapon_bg->setWindowOpacity(level);
-
-//    this->_card->setWindowOpacity(level);
-//    this->_consume->setWindowOpacity(level);
-//    this->_attack->setWindowOpacity(level);
-//    this->_weapon->setWindowOpacity(level);
-
     if ( level == 0 )
     {
         this->_card_bg->setPixmap(_a_card_bg);

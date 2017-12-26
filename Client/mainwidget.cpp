@@ -199,15 +199,15 @@ void Mainwidget::initCardImg()
     QPixmap var11(":/card/resoure/cardres/gift.png");
     this->_cardImg.insert(24, var11);
 
-    QPixmap var12(":/cardWidget/resoure/img/attack.png");
+    QPixmap var12(":/card/resoure/cardres/kar_98k.png");
     this->_cardImg.insert(31, var12);
-    QPixmap var13(":/cardWidget/resoure/img/attack.png");
+    QPixmap var13(":/card/resoure/cardres/infinity_edge.png");
     this->_cardImg.insert(32, var13);
-    QPixmap var14(":/cardWidget/resoure/img/attack.png");
+    QPixmap var14(":/card/resoure/cardres/archangel_sword.jpg");
     this->_cardImg.insert(33, var14);
-    QPixmap var15(":/cardWidget/resoure/img/attack.png");
+    QPixmap var15(":/card/resoure/cardres/deathfire_staff.png");
     this->_cardImg.insert(34, var15);
-    QPixmap var16(":/cardWidget/resoure/img/attack.png");
+    QPixmap var16(":/card/resoure/cardres/Nokia.png");
     this->_cardImg.insert(35, var16);
 }
 
@@ -346,13 +346,13 @@ void Mainwidget::GetNewCard(QDataStream &stream,int category)
         m = new Arms_Nokia();
         break;
     default:
+        QMessageBox::warning(this, QStringLiteral("错误"), QStringLiteral("未知代码"));
+        return;
         break;
     }
     stream>>*m;
     if(this->_me.cardInHand.size()<5)
     {
-        //更新UI
-        qDebug()<<m->getName();
         //UI更新，插入到手牌组
         SetHandCardUI(m,img);
     }
@@ -424,10 +424,8 @@ void Mainwidget::PlayCard()
                                 + this->_enemy.battleField[target]->_realCard->getName() + QStringLiteral(" 造成6点伤害");
                         break;
                     case 22://王者咏唱
-                        qDebug()<<".";
                         target = this->_me.battlerID.key(this->_me.battleField.key(this->targetCard));
                         myID = usedCard->getId();
-                        qDebug()<<"..";
                         //日志
                         log_str = log_str + QStringLiteral("使用 ") + usedCard->getName() + QStringLiteral(" 给 ")
                                 + this->_me.battlerID[target]->getName() + QStringLiteral(" 增加4点攻击力");
@@ -454,7 +452,6 @@ void Mainwidget::PlayCard()
                 ui->_playCard->setText(QStringLiteral("出牌"));
                 //把手牌从UI以及结构里删除
                 DeleteHandCard(usedCardWidget,usedCard);
-                qDebug()<<"delete";
                 //发送出牌报文
                 sendMessage(myID,target);
                 MyConsumeChangedUI(this->_me.hp,newConsume);
@@ -467,7 +464,6 @@ void Mainwidget::PlayCard()
         }
         else //非选择目标阶段
         {
-            qDebug()<<"2 jieduan";
             if ( newConsume>=0){ //如果够费打出
                 //非选择目标阶段
                 //打出怪兽牌放置在场上，打出魔法或者装备卡，详细信息输出在右边的详细列表
@@ -577,10 +573,8 @@ void Mainwidget::PlayCard()
                         case 24: //老师的馈赠
                             // 发送出牌报文
                         {
-                            qDebug()<<"k.";
                             myID = usedCard->getId();
                             target = usedCard->getId();
-                            qDebug()<<"k..";
                             sendMessage(myID,target);
                             MyConsumeChangedUI(this->_me.hp,newConsume);
                             //删除卡片UI
@@ -588,7 +582,6 @@ void Mainwidget::PlayCard()
                             log_str = log_str + QStringLiteral("使用 ") + usedCard->getName() + QStringLiteral(" 本回合获得10法力");
                             DeleteHandCard(usedCardWidget,usedCard);
                             this->selectCard = nullptr;
-                            qDebug()<<"k...";
                             this->ui->_battleLog->append(log_str);
                             break;
                         }
@@ -605,10 +598,7 @@ void Mainwidget::PlayCard()
 
             }
         }
-        //@yap
-        //qDebug()<<usedCard->getName();
     }
-    qDebug()<<"p c size:"<<_me.cardInHand.size();
 }
 
 //获取对手名字
@@ -682,8 +672,6 @@ void Mainwidget::PlayerStatusChanged(QDataStream &stream)
     {
         stream>>this->_enemy.hp;
         stream>>this->_enemy.consume;
-        qDebug()<<_enemy.hp;
-        qDebug()<<_enemy.consume;
         this->ui->label_enemy_hp->setText(QString::number(this->_enemy.hp));
         this->ui->label_enemy_consume->setText(QString::number(this->_enemy.consume));
     }
@@ -907,7 +895,6 @@ void Mainwidget::MonsterDamaged(QDataStream &stream)
 
             Card *c = this->_me.battlerID[attacked_id];
             log_str = log_str + c->getName() + QStringLiteral(" 死亡");
-            qDebug()<<c->getName();
             CardWidget *w = this->_me.battleField[c];
             this->_me.battleField.remove(c);
             for(int i = 0; i < 3; i++)
@@ -1103,21 +1090,20 @@ void Mainwidget::AttackMonster()
                 myID = attackCard->getId();
                 sendMessage(myID,target);//发送报文
 
-                //动画
-                MoveWidget(selectCard,targetCard);
-
                 dynamic_cast<MonsterCard*>(attackCard)->setHasAttack(true);
                 ChooseTarget = false;//退出目标选择阶段
                 this->ui->_attackMonster->setText(QStringLiteral("攻击怪兽"));
                 this->ui->_attackPlayer->setEnabled(true);
                 EnableAllWidget();//恢复所有点击
+
+                //动画
+                MoveWidget(selectCard,targetCard);
+
                 this->selectCard = nullptr;
                 this->targetCard = nullptr;
                 QString log_str = QStringLiteral("己方：");
-                qDebug()<<"2...";
                 log_str = log_str + attackCard->getName() + QStringLiteral(" 对敌方 ")
                         + this->_enemy.battleField[target]->_realCard->getName() + QStringLiteral(" 发动攻击");
-                qDebug()<<"2....,";
                 this->ui->_battleLog->append(log_str);
             }
         }
@@ -1130,7 +1116,6 @@ void Mainwidget::AttackMonster()
             ChooseTarget = true;//进入目标选择阶段
         }
     }
-    qDebug()<<"at m size:"<<_me.cardInHand.size();
 }
 
 void Mainwidget::AttackPlayer()
@@ -1146,7 +1131,6 @@ void Mainwidget::AttackPlayer()
         dynamic_cast<MonsterCard*>(attackCard)->setHasAttack(true);
         this->selectCard = nullptr;
     }
-    qDebug()<<"at p size:"<<_me.cardInHand.size();
 }
 
 void Mainwidget::OnWidgetClicked(CardWidget *widget)
@@ -1157,20 +1141,6 @@ void Mainwidget::OnWidgetClicked(CardWidget *widget)
     else
     {
         this->selectCard = widget;
-
-        //        //TODO 你知道的
-        //        if (this->_me.cardInHand.key(widget,nullptr)!=nullptr)//如果这场卡属于手牌
-        //        {
-        //            SetDetailedCard(this->_me.cardInHand.key(widget),"");
-        //            ui->_playCard->setEnabled(true);//激活出牌按钮
-        //            ui->_attackMonster->setEnabled(false);//无效化攻击按钮
-        //            ui->_attackPlayer->setEnabled(false);
-        //        }
-        //        else if (this->_me.battleField.key(widget,nullptr)!=nullptr){//如果这张卡是场上的怪兽卡
-        //            ui->_attackMonster->setEnabled(true);//激活攻击按钮
-        //            ui->_attackPlayer->setEnabled(true);
-        //            ui->_playCard->setEnabled(false);//无效化出牌按钮
-        //        }
     }
 }
 
@@ -1270,10 +1240,9 @@ void Mainwidget::DeleteHandCard(CardWidget *deleteCard, Card *usedCard)
         }
         //从手牌中删除
         this->_me.cardInHand.remove(usedCard);
-        //        qDebug()<<(usedCard == nullptr);
+
         if (dynamic_cast<MagicCard*>(usedCard)!=nullptr){
             delete usedCard;
-            qDebug()<<"delete MagicCard ed";
         }
         //@yap 注销事件过滤器
         if ( this->lastCard == deleteCard )
@@ -1349,12 +1318,9 @@ void Mainwidget::EnableAllWidget()
     foreach (CardWidget* temp2,this->_me.battleField){
         temp2->setEnabled(true);
     }
-    qDebug()<<"size:"<<_me.cardInHand.size();
     foreach (CardWidget* temp3, this->_me.cardInHand) {
         temp3->setEnabled(true);
-        qDebug()<<"kk";
     }
-    qDebug()<<"out";
 }
 
 void Mainwidget::DisableCard()

@@ -70,7 +70,6 @@ void Server::sendMessage(Player * const player, int message)
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
     out << message;
-    qDebug()<<player->getPlayerName() << " out " << message << " succeed";
 }
 
 void Server::sendMessage(Player * const player, const QString &message)
@@ -79,7 +78,6 @@ void Server::sendMessage(Player * const player, const QString &message)
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
     out << message;
-    //qDebug()<<player->getPlayerName() << " out " << message << " succeed";
 }
 
 void Server::sendMessage(Player * const player, const Card *card)
@@ -87,12 +85,7 @@ void Server::sendMessage(Player * const player, const Card *card)
     QTcpSocket* send = &(player->getSocket());
     QDataStream out(send);
     out.setVersion(QDataStream::Qt_5_9);
-//    if (dynamic_cast<MagicCard*> (card))
-//    {
-//        MagicCard
-//    }
     out<<(*card);
-    qDebug()<<player->getPlayerName() << " out card:"<< card->getName() << " id:" << card->getId();
 }
 
 /**
@@ -119,7 +112,7 @@ void Server::dealSendMagic(Player* p1, Card *srcCard, int descID)
     Player* p2 = this->getPlayerFromSocket(&(p1->getSocket()), 1);
     //使用魔法卡
     MagicCard * srcMagic = dynamic_cast<MagicCard*>(srcCard);
-    qDebug()<<srcMagic->getName();
+
     switch (srcCard->getCategory()) {
     case 22:    //王者吟唱
         p2 = p1;
@@ -173,7 +166,7 @@ void Server::doDisconnect()
 {
     QTcpSocket* disSocket = static_cast<QTcpSocket*> (sender());
     Player * ePlayer = getPlayerFromSocket(disSocket, 1);
-    qDebug()<<ePlayer->getSocket().peerPort();
+
     QTcpSocket * enemySocket = &(ePlayer->getSocket());
     //发送给对方，己方已经断开，游戏结束
     QDataStream out(enemySocket);
@@ -182,7 +175,6 @@ void Server::doDisconnect()
     enemySocket->flush();
 
     Player * mPlayer = getPlayerFromSocket(disSocket, 0);
-    qDebug()<<mPlayer->getSocket().peerPort();
     mPlayer->deleteLater();
     emit resetPlayer(ePlayer, this);    //发送信号，将未掉线一方重新进入匹配队列
 }
@@ -518,7 +510,6 @@ void Server::doTurnStart()
     sendMessage(eplayer, player->getHP());
     sendMessage(eplayer, player->getConsume());
     eplayer->getSocket().flush();
-    qDebug()<<player->getPlayerName()<<" to "<<eplayer->getPlayerName();
 }
 
 

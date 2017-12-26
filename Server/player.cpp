@@ -27,8 +27,6 @@ void Player::initTotalCard(QStandardItemModel *model)
     {
         foreach (auto var, this->_totalCardDeck) {
             this->_totalCardDeck.remove(var->getId());
-            qDebug()<<var->getCategory();
-            qDebug()<<typeid(*var).name();
             delete var;
         }
     }
