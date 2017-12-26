@@ -9,6 +9,7 @@
 #include "connectwidget.h"
 #include "carddeck.h"
 #include <QPropertyAnimation>
+#include <QMediaPlayer>
 
 namespace Ui {
 class Widget;
@@ -80,6 +81,8 @@ private:
     CardWidget* _detailCard;    //右上详情
 
     QPropertyAnimation _animation;
+    //音乐
+    QMediaPlayer *BGMPlayer;
 
 private:
     void initConnect();     //初始化界面
@@ -87,6 +90,7 @@ private:
     void initMap();
     void initCardImg();
     void initStyleSheet();  //设置样式表
+    void initSound();       //初始化声音
     void setBackground();   //设置背景
     void setProfiles();     //设置对方头像
     void sendMessage(int MyCardId,int EnemyCardId);//发送信息

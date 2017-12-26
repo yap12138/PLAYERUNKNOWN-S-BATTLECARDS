@@ -2,6 +2,8 @@
 #include "ui_mainwidget.h"
 #include <QDebug>
 #include <QMessageBox>
+#include <QUrl>
+#include <QMediaPlaylist>
 
 Mainwidget::Mainwidget(QWidget *parent) :
     QWidget(parent),
@@ -18,12 +20,14 @@ Mainwidget::Mainwidget(QWidget *parent) :
     initConnect();
     initMap();
     initStyleSheet();
+    initSound();
     setBackground();
     setProfiles();
 }
 
 Mainwidget::~Mainwidget()
 {
+    this->BGMPlayer->deleteLater();
     delete ui;
 }
 
@@ -236,7 +240,23 @@ void Mainwidget::initStyleSheet()
 
     this->ui->_cancel->setStyleSheet( "QPushButton {color: rgb(255, 170, 127); border:2px groove gray; border-radius:10px; padding:2px 4px; background-color: rgb(135, 135, 135)}"
                                         "QPushButton:hover { background-color:rgba(100,255,100, 100); border-color: rgba(255, 225, 255, 200); color:rgba(0, 0, 0, 200)}"
-                                        "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
+                                      "QPushButton:pressed {  background-color:rgba(100,255,100, 200); border-color: rgba(255, 225, 255, 30); border-style: inset; color:rgba(0, 0, 0, 100)}");
+}
+
+void Mainwidget::initSound()
+{
+    this->BGMPlayer = new QMediaPlayer();
+
+    QDir temDir1("src/bgm.mp3");
+    QString absDir1 = temDir1.absolutePath();
+    absDir1.replace("/", "\\");
+    QMediaPlaylist *list = new QMediaPlaylist(this->BGMPlayer);
+    list->addMedia(QUrl::fromLocalFile(absDir1));
+    list->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
+    BGMPlayer->setVolume(60);
+    BGMPlayer->setPlaylist(list);
+
+    BGMPlayer->play();
 }
 
 void Mainwidget::setBackground()
